@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI设计中 - 叠层光电探测器设计系统</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <style>
+        .thinking-container {
+            max-width: 700px;
+            width: 100%;
+        }
+        
+        .card-body {
+            padding: 20px;
+        }
+        
+        /* AI大脑动画 */
+        .brain-container {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .brain-icon {
+            font-size: 50px;
+            color: #ab0303;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        
+        /* 思考步骤 */
+        .thinking-steps {
+            margin: 30px 0;
+        }
+        .step-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 3px solid #e0e0e0;
+            transition: all 0.3s;
+        }
+        .step-item.active {
+            background: linear-gradient(135deg, #e3f2fd 0%, #e8eaf6 100%);
+            border-left-color: #ab0303;
+            box-shadow: 0 3px 10px rgba(171, 3, 3, 0.2);
+        }
+        .step-item.completed {
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            border-left-color: #4caf50;
+        }
+        .step-icon {
+            font-size: 18px;
+            margin-right: 10px;
+            width: 30px;
+            text-align: center;
+        }
+        .step-item.active .step-icon {
+            color: #ab0303;
+            animation: spin 2s linear infinite;
+        }
+        .step-item.completed .step-icon {
+            color: #4caf50;
+        }
+        .step-item.pending .step-icon {
+            color: #bdbdbd;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .step-text {
+            flex: 1;
+        }
+        .step-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 2px;
+            font-size: 14px;
+        }
+        .step-description {
+            font-size: 12px;
+            color: #666;
+        }
+        .step-item.active .step-title {
+            color: #ab0303;
+        }
+        
+        /* 进度条 */
+        .progress-container {
+            margin: 15px 0;
+        }
+        .progress {
+            height: 6px;
+            border-radius: 10px;
+            background: #e0e0e0;
+        }
+        .progress-bar {
+            background: linear-gradient(90deg, #ab0303 0%, #8b0202 100%);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        .progress-text {
+            text-align: center;
+            margin-top: 6px;
+            font-weight: 600;
+            color: #ab0303;
+            font-size: 14px;
+        }
+        
+        /* 实时日志 */
+        .log-container {
+            background: #1e1e1e;
+            border-radius: 8px;
+            padding: 12px;
+            max-height: 120px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            margin-top: 15px;
+        }
+        .log-item {
+            color: #4caf50;
+            margin-bottom: 5px;
+            animation: fadeIn 0.3s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .log-time {
+            color: #9e9e9e;
+            margin-right: 10px;
+        }
+        
+        /* 提示信息 */
+        .info-box {
+            background: #fff3cd;
+            border-left: 3px solid #ffc107;
+            padding: 10px 12px;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-size: 13px;
+        }
+        .info-box i {
+            color: #ffc107;
+            margin-right: 10px;
+        }
+        
+        /* 粒子效果背景 */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: float 15s infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    {% include 'navbar.html' %}
+    
+    <!-- 粒子背景 -->
+    <div class="particles" id="particles"></div>
+    
+    <div class="content-wrapper">
+        <div class="thinking-container">
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="fas fa-bolt-lightning"></i> AI正在设计中...</h2>
+                <p class="mb-0 mt-2">请稍候，DeepSeek AI正在为您生成最优方案</p>
+            </div>
+            <div class="card-body">
+                <!-- AI大脑动画 -->
+                <div class="brain-container">
+                    <i class="fas fa-bolt-lightning brain-icon"></i>
+                </div>
+                
+                <!-- 进度条 -->
+                <div class="progress-container">
+                    <div class="progress">
+                        <div class="progress-bar" id="progressBar" role="progressbar" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-text" id="progressText">准备中... 0%</div>
+                </div>
+                
+                <!-- 思考步骤 -->
+                <div class="thinking-steps">
+                    <div class="step-item pending" id="step1">
+                        <div class="step-icon"><i class="fas fa-check-circle"></i></div>
+                        <div class="step-text">
+                            <div class="step-title">接收设计参数</div>
+                            <div class="step-description">解析材料类型、禁带宽度、厚度等参数</div>
+                        </div>
+                    </div>
+                    
+                    <div class="step-item pending" id="step2">
+                        <div class="step-icon"><i class="fas fa-cog"></i></div>
+                        <div class="step-text">
+                            <div class="step-title">构建提示词</div>
+                            <div class="step-description">生成结构化的AI提示词模板</div>
+                        </div>
+                    </div>
+                    
+                    <div class="step-item pending" id="step3">
+                        <div class="step-icon"><i class="fas fa-rocket"></i></div>
+                        <div class="step-text">
+                            <div class="step-title">调用DeepSeek API</div>
+                            <div class="step-description">发送请求到AI服务器进行分析</div>
+                        </div>
+                    </div>
+                    
+                    <div class="step-item pending" id="step4">
+                        <div class="step-icon"><i class="fas fa-bolt-lightning"></i></div>
+                        <div class="step-text">
+                            <div class="step-title">AI智能分析</div>
+                            <div class="step-description">深度学习模型计算最优层叠结构</div>
+                        </div>
+                    </div>
+                    
+                    <div class="step-item pending" id="step5">
+                        <div class="step-icon"><i class="fas fa-file-code"></i></div>
+                        <div class="step-text">
+                            <div class="step-title">解析设计方案</div>
+                            <div class="step-description">提取层结构、性能参数和优化建议</div>
+                        </div>
+                    </div>
+                    
+                    <div class="step-item pending" id="step6">
+                        <div class="step-icon"><i class="fas fa-chart-line"></i></div>
+                        <div class="step-text">
+                            <div class="step-title">生成可视化</div>
+                            <div class="step-description">绘制层叠结构图和性能曲线</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 实时日志 -->
+                <div class="log-container" id="logContainer">
+                    <div class="log-item">
+                        <span class="log-time">[00:00]</span>
+                        <span>系统初始化完成</span>
+                    </div>
+                </div>
+                
+                <!-- 提示信息 -->
+                <div class="info-box">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>提示：</strong>AI设计通常需要10-30秒，复杂设计可能需要更长时间。
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let startTime = Date.now();
+        let currentStepIndex = 0;
+        
+        const stepMapping = {
+            1: 'step1',
+            2: 'step2',
+            3: 'step3',
+            4: 'step4',
+            5: 'step5',
+            6: 'step6'
+        };
+        
+        // 更新进度条
+        function updateProgress(percent, message) {
+            document.getElementById('progressBar').style.width = percent + '%';
+            document.getElementById('progressText').textContent = 
+                message || `处理中... ${Math.round(percent)}%`;
+        }
+        
+        // 添加日志
+        function addLog(message) {
+            const logContainer = document.getElementById('logContainer');
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            const timeStr = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            
+            const logItem = document.createElement('div');
+            logItem.className = 'log-item';
+            logItem.innerHTML = `<span class="log-time">[${timeStr}]</span><span>${message}</span>`;
+            logContainer.appendChild(logItem);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        
+        // 更新步骤状态
+        function updateStep(stepNum, status) {
+            const stepId = stepMapping[stepNum];
+            if (!stepId) return;
+            
+            const stepElement = document.getElementById(stepId);
+            if (!stepElement) return;
+            
+            // 移除所有状态类
+            stepElement.classList.remove('pending', 'active', 'completed');
+            
+            if (status === 'active') {
+                stepElement.classList.add('active');
+            } else if (status === 'completed') {
+                stepElement.classList.add('completed');
+                stepElement.querySelector('.step-icon i').className = 'fas fa-check-circle';
+            }
+        }
+        
+        // 调用后端API
+        async function startDesign() {
+            try {
+                const response = await fetch('/api/design', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    
+                    const chunk = decoder.decode(value);
+                    const lines = chunk.split('\\n').filter(line => line.trim());
+                    
+                    for (const line of lines) {
+                        try {
+                            const data = JSON.parse(line);
+                            
+                            if (data.step === -1) {
+                                // 错误处理
+                                addLog(`❌ 错误: ${data.error}`);
+                                updateProgress(0, '设计失败');
+                                alert(`设计失败: ${data.error}`);
+                                setTimeout(() => {
+                                    window.location.href = '/';
+                                }, 3000);
+                                return;
+                            }
+                            
+                            // 更新当前步骤
+                            if (data.step > currentStepIndex) {
+                                if (currentStepIndex > 0) {
+                                    updateStep(currentStepIndex, 'completed');
+                                }
+                                currentStepIndex = data.step;
+                                updateStep(currentStepIndex, 'active');
+                            }
+                            
+                            // 更新进度
+                            if (data.progress !== undefined) {
+                                updateProgress(data.progress, data.message);
+                            }
+                            
+                            // 添加日志
+                            if (data.message) {
+                                // 如果是AI思考日志（带log标记），使用特殊样式
+                                if (data.log) {
+                                    addLog(data.message);
+                                } else {
+                                    addLog(`✓ ${data.message}`);
+                                }
+                            }
+                            
+                            // 完成后跳转
+                            if (data.redirect) {
+                                updateStep(currentStepIndex, 'completed');
+                                addLog('🎉 设计完成！正在跳转...');
+                                setTimeout(() => {
+                                    window.location.href = data.redirect;
+                                }, 1000);
+                                return;
+                            }
+                        } catch (e) {
+                            console.error('解析响应错误:', e);
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('请求错误:', error);
+                addLog(`❌ 网络错误: ${error.message}`);
+                alert('网络请求失败，请检查网络连接');
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 3000);
+            }
+        }
+        
+        // 生成粒子效果
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        // 页面加载完成后开始
+        window.addEventListener('load', () => {
+            createParticles();
+            addLog('🚀 开始设计流程...');
+            setTimeout(() => {
+                startDesign();
+            }, 500);
+        });
+    </script>
+    </div>
+</body>
+</html>

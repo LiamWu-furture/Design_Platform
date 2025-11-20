@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设计结果 - 叠层光电探测器设计系统</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <style>
+        .content-wrapper {
+            padding: 15px 0;
+        }
+        .main-container {
+            max-width: 1200px;
+            width: 95%;
+            margin: 0 auto;
+        }
+        .card {
+            margin-bottom: 15px;
+        }
+        .card-header {
+            border-radius: 12px 12px 0 0 !important;
+            padding: 12px 18px;
+            font-weight: 700;
+            font-size: 16px;
+        }
+        .error-card .card-header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        .layer-item {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-bottom: 10px;
+            border-left: 4px solid #ab0303;
+        }
+        .layer-item h5 {
+            color: #ab0303;
+            font-weight: 700;
+            margin-bottom: 6px;
+            font-size: 15px;
+        }
+        .layer-item .row {
+            font-size: 13px;
+        }
+        
+        /* 3D模型容器 */
+        .model-3d-scene {
+            perspective: 1500px;
+            width: 100%;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            cursor: grab;
+        }
+        .model-3d-scene:active {
+            cursor: grabbing;
+        }
+        .model-3d-wrapper {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            transform-style: preserve-3d;
+            transform: rotateX(-15deg) rotateY(0deg);
+            transition: transform 0.1s ease-out;
+        }
+        
+        /* 单个层的3D模型 */
+        .layer-3d-block {
+            position: absolute;
+            width: 300px;
+            height: 60px;
+            transform-style: preserve-3d;
+            transition: all 0.3s;
+        }
+        .layer-3d-block:hover {
+            transform: scale(1.05);
+        }
+        
+        /* 层的各个面 */
+        .layer-face {
+            position: absolute;
+            width: 300px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            border: 2px solid rgba(171, 3, 3, 0.5);
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
+            opacity: 0.9;
+        }
+        .layer-face-front {
+            transform: translateZ(30px);
+        }
+        .layer-face-back {
+            transform: translateZ(-30px) rotateY(180deg);
+        }
+        .layer-face-left {
+            width: 60px;
+            transform: translateX(-30px) rotateY(-90deg);
+        }
+        .layer-face-right {
+            width: 60px;
+            transform: translateX(270px) rotateY(90deg);
+        }
+        .layer-face-top {
+            height: 60px;
+            transform: translateY(-30px) rotateX(90deg);
+        }
+        .layer-face-bottom {
+            height: 60px;
+            transform: translateY(30px) rotateX(-90deg);
+        }
+        
+        /* 层信息标签 */
+        .layer-label {
+            position: absolute;
+            left: 320px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 8px 12px;
+            border-radius: 6px;
+            border-left: 3px solid #ab0303;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            white-space: nowrap;
+            font-size: 11px;
+            z-index: 100;
+        }
+        .layer-label-title {
+            font-weight: 700;
+            color: #ab0303;
+            margin-bottom: 3px;
+        }
+        .layer-label-info {
+            color: #666;
+            font-size: 10px;
+        }
+        
+        /* 控制按钮 */
+        .model-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .control-btn {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #ab0303 0%, #8b0202 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(171, 3, 3, 0.4);
+        }
+        .control-btn i {
+            margin-right: 5px;
+        }
+        
+        /* 坐标轴 */
+        .axis {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        .axis-x {
+            width: 150px;
+            height: 2px;
+            transform: translateZ(0);
+        }
+        .axis-y {
+            width: 2px;
+            height: 150px;
+            transform: translateZ(0);
+        }
+        .axis-z {
+            width: 2px;
+            height: 150px;
+            transform: rotateY(90deg);
+        }
+        .performance-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 14px;
+        }
+        .performance-item:last-child {
+            border-bottom: none;
+        }
+        .performance-label {
+            font-weight: 600;
+            color: #555;
+        }
+        .performance-value {
+            color: #ab0303;
+            font-weight: 700;
+        }
+        .suggestion-item {
+            background: #fff3cd;
+            border-left: 3px solid #ffc107;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            font-size: 13px;
+        }
+        .btn-back {
+            background: linear-gradient(135deg, #ab0303 0%, #8b0202 100%);
+            border: none;
+            border-radius: 8px;
+            margin:20px auto;
+            padding: 8px 25px;
+            color: white;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.2s;
+            font-size: 14px;
+        }
+        .btn-back:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(171, 3, 3, 0.4);
+            color: white;
+        }
+        .visualization-img {
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 12px;
+        }
+        .input-summary {
+            background: #e3f2fd;
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-bottom: 12px;
+        }
+        .input-summary-item {
+            margin-bottom: 5px;
+            font-size: 13px;
+        }
+        .input-summary-label {
+            font-weight: 600;
+            color: #1976d2;
+            font-size: 13px;
+        }
+        h5 {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .alert-heading {
+            font-size: 16px;
+        }
+        .card-body {
+            padding: 15px;
+        }
+        
+        /* 选项卡样式 */
+        .result-tabs {
+            display: flex;
+            gap: 5px;
+            background: rgba(96, 109, 94, 0.1);
+            padding: 5px;
+            border-radius: 10px;
+            margin-bottom: 0;
+        }
+        .result-tab {
+            flex: 1;
+            padding: 10px 15px;
+            background: transparent;
+            border: none;
+            color: rgba(88, 88, 88, 0.7);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .result-tab:hover {
+            background: rgba(94, 81, 170, 0.15);
+            color: white;
+        }
+        .result-tab.active {
+            background: white;
+            color: #ab0303;
+            font-weight: 600;
+        }
+        .tab-content-item {
+            display: none;
+        }
+        .tab-content-item.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .main-result-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            height: calc(100vh - 180px);
+            display: flex;
+            flex-direction: column;
+        }
+        .result-tabs {
+            flex-shrink: 0;
+        }
+        .tab-content-wrapper {
+            padding: 20px;
+            flex: 1;
+            overflow-y: auto;
+            background: white;
+            color: #333;
+        }
+        /* 确保选项卡内容区域的文字颜色正确 */
+        .tab-content-wrapper h5,
+        .tab-content-wrapper h6,
+        .tab-content-wrapper p,
+        .tab-content-wrapper span,
+        .tab-content-wrapper div {
+            color: #333;
+        }
+        .tab-content-wrapper .input-summary-label {
+            color: #1976d2;
+        }
+        .tab-content-wrapper .performance-value {
+            color: #ab0303;
+        }
+        .tab-content-wrapper .layer-item h5 {
+            color: #ab0303;
+        }
+        .tab-content-wrapper .text-muted {
+            color: #6c757d !important;
+        }
+    </style>
+</head>
+<body>
+    {% include 'navbar.html' %}
+    
+    <div class="content-wrapper">
+        <div class="main-container">
+        {% if error %}
+        <!-- 错误显示 -->
+        <div class="card error-card">
+            <div class="card-header">
+                <i class="fas fa-exclamation-triangle"></i> 设计失败
+            </div>
+            <div class="card-body">
+                <div class="alert alert-danger" role="alert">
+                    <h5 class="alert-heading"><i class="fas fa-times-circle"></i> 错误信息</h5>
+                    <p>{{ error }}</p>
+                </div>
+                
+                {% if raw_response %}
+                <div class="mt-4">
+                    <h5>API原始响应：</h5>
+                    <pre class="bg-light p-3 rounded">{{ raw_response }}</pre>
+                </div>
+                {% endif %}
+                
+                {% if user_input %}
+                <div class="input-summary">
+                    <h5><i class="fas fa-info-circle"></i> 您的输入参数：</h5>
+                    <div class="input-summary-item"><span class="input-summary-label">材料类型：</span>{{ user_input.material_type }}</div>
+                    <div class="input-summary-item"><span class="input-summary-label">禁带宽度：</span>{{ user_input.bandgap_range }}</div>
+                    <div class="input-summary-item"><span class="input-summary-label">厚度范围：</span>{{ user_input.thickness_range }}</div>
+                    <div class="input-summary-item"><span class="input-summary-label">目标应用：</span>{{ user_input.target_application }}</div>
+                    {% if user_input.additional_requirements %}
+                    <div class="input-summary-item"><span class="input-summary-label">额外要求：</span>{{ user_input.additional_requirements }}</div>
+                    {% endif %}
+                </div>
+                {% endif %}
+                
+                <div class="text-center mt-4">
+                    <a href="/" class="btn-back"><i class="fas fa-arrow-left"></i> 返回重新设计</a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <!-- 成功显示 - 选项卡形式 -->
+        <div class="main-result-card">
+            <!-- 选项卡导航 -->
+            <div class="result-tabs">
+                <button class="result-tab active" onclick="switchTab('params')">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>设计参数</span>
+                </button>
+                <button class="result-tab" onclick="switchTab('structure')">
+                    <i class="fas fa-layer-group"></i>
+                    <span>层叠结构</span>
+                </button>
+                <button class="result-tab" onclick="switchTab('visualization')">
+                    <i class="fas fa-chart-line"></i>
+                    <span>可视化</span>
+                </button>
+                <button class="result-tab" onclick="switchTab('performance')">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>性能参数</span>
+                </button>
+                <button class="result-tab" onclick="switchTab('suggestions')">
+                    <i class="fas fa-lightbulb"></i>
+                    <span>优化建议</span>
+                </button>
+            </div>
+            
+            <!-- 选项卡内容 -->
+            <div class="tab-content-wrapper">
+                <!-- 设计参数选项卡 -->
+                <div id="params-tab" class="tab-content-item active">
+                    <h5 class="mb-3"><i class="fas fa-clipboard-list"></i> 设计参数</h5>
+                    <div class="input-summary">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="input-summary-item"><span class="input-summary-label">材料类型：</span>{{ user_input.material_type }}</div>
+                                <div class="input-summary-item"><span class="input-summary-label">禁带宽度：</span>{{ user_input.bandgap_range }}</div>
+                                <div class="input-summary-item"><span class="input-summary-label">厚度范围：</span>{{ user_input.thickness_range }}</div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="input-summary-item"><span class="input-summary-label">目标应用：</span>{{ user_input.target_application }}</div>
+                                {% if user_input.additional_requirements %}
+                                <div class="input-summary-item"><span class="input-summary-label">额外要求：</span>{{ user_input.additional_requirements }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 层叠结构选项卡 -->
+                <div id="structure-tab" class="tab-content-item">
+                    <h5 class="mb-3"><i class="fas fa-cube"></i> 层叠结构 3D 模型</h5>
+                    <p class="text-muted text-center mb-3">
+                        <i class="fas fa-info-circle"></i> 使用鼠标拖动旋转模型 | 点击控制按钮快速调整视角
+                    </p>
+                    
+                    {% if design_data.layers %}
+                        <!-- 控制按钮 -->
+                        <div class="model-controls">
+                            <button class="control-btn" onclick="rotateModel('left')">
+                                <i class="fas fa-arrow-left"></i>左转
+                            </button>
+                            <button class="control-btn" onclick="rotateModel('up')">
+                                <i class="fas fa-arrow-up"></i>上转
+                            </button>
+                            <button class="control-btn" onclick="rotateModel('down')">
+                                <i class="fas fa-arrow-down"></i>下转
+                            </button>
+                            <button class="control-btn" onclick="rotateModel('right')">
+                                <i class="fas fa-arrow-right"></i>右转
+                            </button>
+                            <button class="control-btn" onclick="resetModel()">
+                                <i class="fas fa-redo"></i>重置
+                            </button>
+                        </div>
+                        
+                        <!-- 3D模型场景 -->
+                        <div class="model-3d-scene">
+                            <div class="model-3d-wrapper" id="model3d">
+                                {% for layer in design_data.layers %}
+                                {% set layer_index = loop.index0 %}
+                                {% set total_layers = design_data.layers|length %}
+                                {% set y_position = (total_layers - 1 - layer_index) * 70 - (total_layers * 35) + 200 %}
+                                
+                                <!-- 生成不同颜色：使用色相环分配颜色 -->
+                                {% set hue = (layer_index * 360 / total_layers)|int %}
+                                {% set saturation = 75 %}
+                                {% set lightness = 65 %}
+                                
+                                <div class="layer-3d-block" style="top: {{ y_position }}px; left: 50px;">
+                                    <!-- 前面 -->
+                                    <div class="layer-face layer-face-front" style="background: hsla({{ hue }}, {{ saturation }}%, {{ lightness }}%, 0.9);">
+                                        {{ layer.material }}
+                                    </div>
+                                    <!-- 后面 -->
+                                    <div class="layer-face layer-face-back" style="background: hsla({{ hue }}, {{ saturation }}%, {{ lightness - 5 }}%, 0.9);">
+                                        {{ layer.material }}
+                                    </div>
+                                    <!-- 左侧 -->
+                                    <div class="layer-face layer-face-left" style="background: hsla({{ hue }}, {{ saturation }}%, {{ lightness - 10 }}%, 0.9);">
+                                    </div>
+                                    <!-- 右侧 -->
+                                    <div class="layer-face layer-face-right" style="background: hsla({{ hue }}, {{ saturation }}%, {{ lightness - 10 }}%, 0.9);">
+                                    </div>
+                                    <!-- 顶部 -->
+                                    <div class="layer-face layer-face-top" style="background: hsla({{ hue }}, {{ saturation }}%, {{ lightness + 5 }}%, 0.9);">
+                                    </div>
+                                    <!-- 底部 -->
+                                    <div class="layer-face layer-face-bottom" style="background: hsla({{ hue }}, {{ saturation }}%, {{ lightness - 15 }}%, 0.9);">
+                                    </div>
+                                    
+                                    <!-- 层信息标签 -->
+                                    <div class="layer-label">
+                                        <div class="layer-label-title">第{{ loop.index }}层: {{ layer.material }}</div>
+                                        <div class="layer-label-info">厚度: {{ layer.thickness }}nm | 禁带: {{ layer.bandgap }}eV</div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <!-- 层详细信息列表 -->
+                        <div class="mt-4">
+                            <h6 class="mb-3"><i class="fas fa-list"></i> 层详细信息</h6>
+                            {% for layer in design_data.layers %}
+                            <div class="layer-item">
+                                <h5><i class="fas fa-square"></i> 第{{ loop.index }}层：{{ layer.material }}</h5>
+                                <div class="row">
+                                    <div class="col-md-4"><strong>厚度：</strong>{{ layer.thickness }} nm</div>
+                                    <div class="col-md-4"><strong>禁带宽度：</strong>{{ layer.bandgap }} eV</div>
+                                    <div class="col-md-12 mt-2"><strong>功能：</strong>{{ layer.function }}</div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">暂无层叠结构数据</p>
+                    {% endif %}
+                </div>
+
+                <!-- 可视化选项卡 -->
+                <div id="visualization-tab" class="tab-content-item">
+                    <h5 class="mb-3"><i class="fas fa-chart-line"></i> 结构与性能可视化</h5>
+                    {% if images %}
+                        <div class="row">
+                            {% if images.structure %}
+                            <div class="col-md-12 mb-4">
+                                <h6 class="text-center mb-3"><i class="fas fa-layer-group"></i> 层叠结构图</h6>
+                                <img src="{{ url_for('static', filename='images/structure.png') }}" alt="层叠结构图" class="visualization-img">
+                            </div>
+                            {% endif %}
+                            {% if images.performance %}
+                            <div class="col-md-12">
+                                <h6 class="text-center mb-3"><i class="fas fa-wave-square"></i> 光谱响应曲线</h6>
+                                <img src="{{ url_for('static', filename='images/performance.png') }}" alt="性能曲线" class="visualization-img">
+                            </div>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">暂无可视化数据</p>
+                    {% endif %}
+                </div>
+
+                <!-- 性能参数选项卡 -->
+                <div id="performance-tab" class="tab-content-item">
+                    <h5 class="mb-3"><i class="fas fa-tachometer-alt"></i> 性能参数</h5>
+                    {% if design_data.performance %}
+                        {% if design_data.performance.wavelength_range %}
+                        <div class="performance-item">
+                            <span class="performance-label"><i class="fas fa-ruler-horizontal"></i> 波长范围</span>
+                            <span class="performance-value">{{ design_data.performance.wavelength_range[0] }} - {{ design_data.performance.wavelength_range[1] }} nm</span>
+                        </div>
+                        {% endif %}
+                        {% if design_data.performance.quantum_efficiency %}
+                        <div class="performance-item">
+                            <span class="performance-label"><i class="fas fa-percentage"></i> 量子效率</span>
+                            <span class="performance-value">{{ design_data.performance.quantum_efficiency }}%</span>
+                        </div>
+                        {% endif %}
+                        {% if design_data.performance.dark_current %}
+                        <div class="performance-item">
+                            <span class="performance-label"><i class="fas fa-bolt"></i> 暗电流</span>
+                            <span class="performance-value">{{ design_data.performance.dark_current }} A</span>
+                        </div>
+                        {% endif %}
+                    {% else %}
+                        <p class="text-muted">暂无性能参数数据</p>
+                    {% endif %}
+                    
+                    {% if design_data.explanation %}
+                    <div class="mt-4">
+                        <h6><i class="fas fa-file-alt"></i> 设计说明</h6>
+                        <p class="mt-2">{{ design_data.explanation }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- 优化建议选项卡 -->
+                <div id="suggestions-tab" class="tab-content-item">
+                    <h5 class="mb-3"><i class="fas fa-lightbulb"></i> 优化建议</h5>
+                    {% if design_data.optimization_suggestions %}
+                        {% for suggestion in design_data.optimization_suggestions %}
+                        <div class="suggestion-item">
+                            <i class="fas fa-check-circle"></i> {{ suggestion }}
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">暂无优化建议</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- 返回按钮 -->
+        <div class="text-center mb-4">
+            <a href="/" class="btn-back"><i class="fas fa-arrow-left"></i> 返回重新设计</a>
+        </div>
+        {% endif %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/result.js') }}"></script>
+</body>
+</html>
