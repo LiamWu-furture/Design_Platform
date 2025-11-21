@@ -10,12 +10,13 @@ matplotlib.use('Agg')
 plt.rcParams['font.sans-serif'] = ['SimHei', 'DejaVu Sans']
 plt.rcParams['axes.unicode_minus'] = False
 
-def generate_visualizations(design_data):
+def generate_visualizations(design_data, task_id=None):
     """
     根据设计数据生成可视化图像
     
     Args:
         design_data: 包含layers和performance的设计数据字典
+        task_id: 任务ID，用于生成唯一的文件名
         
     Returns:
         dict: 包含图像路径的字典
@@ -25,24 +26,28 @@ def generate_visualizations(design_data):
     # 确保输出目录存在
     os.makedirs('static/images', exist_ok=True)
     
+    # 文件名前缀
+    prefix = f"{task_id}_" if task_id else ""
+    
     # 生成层叠结构图
     if 'layers' in design_data and design_data['layers']:
-        structure_path = generate_structure_plot(design_data['layers'])
+        structure_path = generate_structure_plot(design_data['layers'], prefix)
         image_paths['structure'] = structure_path
     
     # 生成性能曲线图
     if 'performance' in design_data and 'responsivity_data' in design_data['performance']:
-        performance_path = generate_performance_plot(design_data['performance'])
+        performance_path = generate_performance_plot(design_data['performance'], prefix)
         image_paths['performance'] = performance_path
     
     return image_paths
 
-def generate_structure_plot(layers):
+def generate_structure_plot(layers, prefix=""):
     """
     生成叠层结构的堆叠条形图
     
     Args:
         layers: 层结构列表
+        prefix: 文件名前缀
         
     Returns:
         str: 图像相对路径
@@ -79,18 +84,19 @@ def generate_structure_plot(layers):
     
     plt.tight_layout()
     
-    output_path = 'static/images/structure.png'
+    output_path = f'static/images/{prefix}structure.png'
     plt.savefig(output_path, dpi=150, bbox_inches='tight')
     plt.close()
     
     return output_path
 
-def generate_performance_plot(performance):
+def generate_performance_plot(performance, prefix=""):
     """
     生成性能曲线图（响应度 vs 波长）
     
     Args:
         performance: 性能数据字典
+        prefix: 文件名前缀
         
     Returns:
         str: 图像相对路径
@@ -142,7 +148,7 @@ def generate_performance_plot(performance):
     
     plt.tight_layout()
     
-    output_path = 'static/images/performance.png'
+    output_path = f'static/images/{prefix}performance.png'
     plt.savefig(output_path, dpi=150, bbox_inches='tight')
     plt.close()
     

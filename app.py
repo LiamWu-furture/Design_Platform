@@ -30,6 +30,17 @@ def cleanup_old_results():
                 expired_keys.append(task_id)
         
         for key in expired_keys:
+            # 清理关联的图片文件
+            try:
+                if key in design_results:
+                    result_data = design_results[key].get('data', {})
+                    images = result_data.get('images', {})
+                    for img_path in images.values():
+                        if img_path and os.path.exists(img_path):
+                            os.remove(img_path)
+            except Exception as e:
+                print(f"Error cleaning up files for task {key}: {e}")
+                
             del design_results[key]
 
 # 启动清理线程
@@ -244,7 +255,8 @@ def design():
                                  })
         
         # 生成可视化
-        image_paths = generate_visualizations(design_data)
+        temp_task_id = str(uuid.uuid4())
+        image_paths = generate_visualizations(design_data, temp_task_id)
         
         # 渲染结果页面
         return render_template('result.html',

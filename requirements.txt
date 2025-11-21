@@ -4,3 +4,5 @@ matplotlib==3.8.2
 python-dotenv==1.0.0
 numpy==1.26.2
 openai>=1.0.0
+gunicorn
+gevent
