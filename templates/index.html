@@ -53,20 +53,22 @@
                 <form action="/thinking" method="POST">
                     <!-- 材料类型 -->
                     <div class="mb-3">
-                        <label for="material_type" class="form-label icon-label">
-                            <i class="fas fa-atom"></i>
-                            材料类型
-                        </label>
-                        <select class="form-select" id="material_type" name="material_type" required>
-                            <option value="">请选择材料...</option>
-                            <option value="GaAs">GaAs (砷化镓)</option>
-                            <option value="InP">InP (磷化铟)</option>
-                            <option value="Si">Si (硅)</option>
-                            <option value="Ge">Ge (锗)</option>
-                            <option value="InGaAs">InGaAs (铟镓砷)</option>
-                            <option value="GaN">GaN (氮化镓)</option>
-                            <option value="AlGaAs">AlGaAs (铝镓砷)</option>
-                        </select>
+                        <label class="form-label icon-label"><i class="fas fa-layer-group"></i> 材料类型</label>
+                        <div class="row">
+                            <div class="col-md-4 mb-2">
+                                <select class="form-select" id="material_category" required>
+                                    <option value="">选择大类...</option>
+                                    <option value="量子点">量子点</option>
+                                    <option value="单晶材料">单晶材料</option>
+                                    <option value="多晶材料">多晶材料</option>
+                                    <option value="二维材料">二维材料</option>
+                                </select>
+                            </div>
+                            <div class="col-md-8 mb-2">
+                                <input class="form-control" list="material_list" id="material_type" name="material_type" placeholder="选择或输入具体材料..." required disabled>
+                                <datalist id="material_list"></datalist>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- 禁带宽度范围 -->
@@ -107,7 +109,6 @@
                         </label>
                         <select class="form-select" id="target_application" name="target_application" required>
                             <option value="">请选择应用场景...</option>
-                            <option value="红外成像">红外成像</option>
                             <option value="太阳能电池">太阳能电池</option>
                             <option value="光通信">光通信</option>
                             <option value="紫外探测">紫外探测</option>
@@ -137,13 +138,13 @@
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="deep_thinking" id="deep_thinking_yes" value="yes" checked>
                             <label class="form-check-label" for="deep_thinking_yes">
-                                <strong>深度思考模式</strong> (DeepSeek R1 - 推理能力更强，耗时较长)
+                                <strong>深度思考模式</strong> (推理能力更强，耗时较长)
                             </label>
                         </div>
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="deep_thinking" id="deep_thinking_no" value="no">
                             <label class="form-check-label" for="deep_thinking_no">
-                                <strong>快速模式</strong> (DeepSeek V3 - 响应更快，适合快速迭代)
+                                <strong>快速模式</strong> (响应更快，适合快速迭代)
                             </label>
                         </div>
                     </div>
@@ -161,7 +162,7 @@
             <div class="text-center mt-4">
                 <p>
                     <i class="fas fa-info-circle"></i> 
-                    Powered by DeepSeek AI | Flask Framework
+                    Powered by AI | Flask Framework
                 </p>
             </div>
         </div>
@@ -169,6 +170,72 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Hardcoded Material Data
+        const materialsData = {
+            "量子点": {
+                "IV族量子点": ["硅量子点", "锗量子点", "GeSiSn合金量子点"],
+                "II-VI族量子点": ["CdSe量子点", "CdTe量子点"],
+                "III-V族量子点": ["InP量子点", "InAs量子点"],
+                "钙钛矿量子点": ["CsPbBr₃量子点", "CH₃NH₃PbI₃量子点"],
+                "I-III-VI族量子点": ["CuInS₂量子点", "AgInS₂量子点"]
+            },
+            "单晶材料": {
+                "半导体单晶": ["硅单晶", "锗单晶", "砷化镓单晶"],
+                "功能化合物单晶": ["(HPPh₃)₂MnCl₄单晶"],
+                "光学晶体": ["氟化钙单晶", "氟化镁单晶"]
+            },
+            "多晶材料": {
+                "MAX/MAB相材料": ["Ti₂AlC", "Ti₃SiC₂", "Ti₃AlC₂"],
+                "结构陶瓷": ["Ti₂AlC-20TiB₂复合材料", "SiC/GNPs复合材料"],
+                "功能陶瓷": ["FePc/MXene复合材料", "Ti₃C₂/MnO₂异质结"],
+                "纳米多晶": ["十面体冰纳米晶", "二十面体冰纳米晶"]
+            },
+            "二维材料": {
+                "单元素二维材料": ["石墨烯", "硅烯", "黑磷"],
+                "过渡金属硫族化合物(TMDs)": ["二硫化钼(MoS₂)", "二硫化钨(WS₂)"],
+                "MXenes": ["Ti₃C₂Tₓ", "Ti₃CNTₓ"],
+                "氮化物": ["六方氮化硼(h-BN)", "MoSi₂N₄"],
+                "层状氧化物/氢氧化物": ["钴铁氢氧化物", "钙钛矿型氧化物"]
+            }
+        };
+
+        const categorySelect = document.getElementById('material_category');
+        const materialInput = document.getElementById('material_type');
+        const materialDatalist = document.getElementById('material_list');
+
+        // Add event listener for category change
+        if (categorySelect) {
+            categorySelect.addEventListener('change', function() {
+                const category = this.value;
+                console.log("Category selected:", category);
+                
+                // Clear existing options
+                materialDatalist.innerHTML = '';
+                materialInput.value = '';
+                
+                if (category && materialsData[category]) {
+                    // Enable input
+                    materialInput.disabled = false;
+                    
+                    const subcategories = materialsData[category];
+                    
+                    // Populate datalist
+                    for (const subcat in subcategories) {
+                        const materials = subcategories[subcat];
+                        materials.forEach(mat => {
+                            const option = document.createElement('option');
+                            option.value = mat;
+                            materialDatalist.appendChild(option);
+                        });
+                    }
+                    // Focus input
+                    materialInput.focus();
+                } else {
+                    materialInput.disabled = true;
+                }
+            });
+        }
+
         document.querySelector('form').addEventListener('submit', function(e) {
             const bgMin = parseFloat(document.getElementsByName('bandgap_min')[0].value);
             const bgMax = parseFloat(document.getElementsByName('bandgap_max')[0].value);

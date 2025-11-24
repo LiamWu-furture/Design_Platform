@@ -6,3 +6,5 @@ numpy==1.26.2
 openai>=1.0.0
 gunicorn
 gevent
+pandas
+openpyxl

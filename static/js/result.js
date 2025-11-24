@@ -130,3 +130,33 @@ function resetModel() {
     
     model.style.transform = `rotateX(${currentRotationX}deg) rotateY(${currentRotationY}deg)`;
 }
+
+// 切换层的激活状态
+function toggleLayer(element) {
+    // 检查当前是否已经是激活状态
+    const isActive = element.classList.contains('active');
+    
+    // 移除所有层的激活状态
+    document.querySelectorAll('.layer-3d-block').forEach(layer => {
+        layer.classList.remove('active');
+    });
+    
+    // 如果之前未激活，则激活当前层
+    if (!isActive) {
+        element.classList.add('active');
+        
+        // 阻止事件冒泡，防止触发其他点击事件
+        if (event) {
+            event.stopPropagation();
+        }
+    }
+}
+
+// 点击空白处取消选择
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.layer-3d-block')) {
+        document.querySelectorAll('.layer-3d-block').forEach(layer => {
+            layer.classList.remove('active');
+        });
+    }
+});

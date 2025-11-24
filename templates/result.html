@@ -72,19 +72,23 @@
         .layer-3d-block {
             position: absolute;
             width: 300px;
-            height: 60px;
+            height: 40px; /* 减小高度 */
             transform-style: preserve-3d;
             transition: all 0.3s;
+            cursor: pointer; /* 添加手型光标提示可点击 */
         }
         .layer-3d-block:hover {
             transform: scale(1.05);
+        }
+        /* 选中状态的高亮效果 */
+        .layer-3d-block.active {
+            transform: scale(1.05);
+            z-index: 1000; /* 确保选中层在最上层 */
         }
         
         /* 层的各个面 */
         .layer-face {
             position: absolute;
-            width: 300px;
-            height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -93,30 +97,69 @@
             border: 2px solid rgba(171, 3, 3, 0.5);
             box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
             opacity: 0.9;
+            transition: all 0.3s;
+            backface-visibility: hidden; /* 隐藏背面，防止渲染问题 */
+        }
+        
+        /* 选中状态下面板变亮 */
+        .layer-3d-block.active .layer-face {
+            border-color: #ff0000;
+            box-shadow: inset 0 0 30px rgba(171, 3, 3, 0.3);
+        }
+
+        /* 3D盒子各面 - 统一居中定位法 */
+        /* 基础样式：所有面定位到中心，然后调整 */
+        .layer-face-front, .layer-face-back,
+        .layer-face-left, .layer-face-right,
+        .layer-face-top, .layer-face-bottom {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform-origin: center center;
+        }
+
+        /* 前后面：300x40 */
+        .layer-face-front, .layer-face-back {
+            width: 300px;
+            height: 40px;
+            margin-left: -150px; /* -width/2 */
+            margin-top: -20px;   /* -height/2 */
         }
         .layer-face-front {
             transform: translateZ(30px);
         }
         .layer-face-back {
-            transform: translateZ(-30px) rotateY(180deg);
+            transform: rotateY(180deg) translateZ(30px);
+        }
+
+        /* 左右面：60x40 */
+        .layer-face-left, .layer-face-right {
+            width: 60px;
+            height: 40px;
+            margin-left: -30px;  /* -width/2 */
+            margin-top: -20px;   /* -height/2 */
         }
         .layer-face-left {
-            width: 60px;
-            transform: translateX(-30px) rotateY(-90deg);
+            transform: rotateY(-90deg) translateZ(150px);
         }
         .layer-face-right {
-            width: 60px;
-            transform: translateX(270px) rotateY(90deg);
+            transform: rotateY(90deg) translateZ(150px);
+        }
+
+        /* 上下面：300x60 */
+        .layer-face-top, .layer-face-bottom {
+            width: 300px;
+            height: 60px;
+            margin-left: -150px; /* -width/2 */
+            margin-top: -30px;   /* -height/2 */
         }
         .layer-face-top {
-            height: 60px;
-            transform: translateY(-30px) rotateX(90deg);
+            transform: rotateX(90deg) translateZ(20px);
         }
         .layer-face-bottom {
-            height: 60px;
-            transform: translateY(30px) rotateX(-90deg);
+            transform: rotateX(-90deg) translateZ(20px);
         }
-        
+
         /* 层信息标签 */
         .layer-label {
             position: absolute;
@@ -131,7 +174,20 @@
             white-space: nowrap;
             font-size: 11px;
             z-index: 100;
+            
+            /* 默认隐藏 */
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s, transform 0.3s;
         }
+        
+        /* 只有当父元素有 active 类时才显示 */
+        .layer-3d-block.active .layer-label {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(-50%) translateX(10px);
+        }
+        
         .layer-label-title {
             font-weight: 700;
             color: #ab0303;
@@ -474,39 +530,52 @@
                                 {% for layer in design_data.layers %}
                                 {% set layer_index = loop.index0 %}
                                 {% set total_layers = design_data.layers|length %}
-                                {% set y_position = (total_layers - 1 - layer_index) * 70 - (total_layers * 35) + 200 %}
+                                
+                                <!-- 使用后端计算的视觉属性 -->
+                                {% set h = layer.visual_height %}
+                                {% set h_half = h / 2 %}
+                                {% set y_pos = layer.y_position %}
                                 
                                 <!-- 生成不同颜色：使用色相环分配颜色 -->
                                 {% set hue = (layer_index * 360 / total_layers)|int %}
                                 {% set saturation = 75 %}
                                 {% set lightness = 65 %}
                                 
-                                <div class="layer-3d-block" style="top: {{ y_position }}px; left: 50px;">
+                                <div class="layer-3d-block" style="top: {{ y_pos }}px; left: 50px; height: {{ h }}px;" onclick="toggleLayer(this)">
                                     <!-- 前面 -->
-                                    <div class="layer-face layer-face-front" style="background: hsla({{ hue }}, {{ saturation }}%, {{ lightness }}%, 0.9);">
+                                    <div class="layer-face layer-face-front" style="background: hsla({{ hue }}, {{ saturation }}%, {{ lightness }}%, 0.9); height: {{ h }}px; margin-top: -{{ h_half }}px;">
                                         {{ layer.material }}
                                     </div>
                                     <!-- 后面 -->
-                                    <div class="layer-face layer-face-back" style="background: hsla({{ hue }}, {{ saturation }}%, {{ lightness - 5 }}%, 0.9);">
+                                    <div class="layer-face layer-face-back" style="background: hsla({{ hue }}, {{ saturation }}%, {{ lightness - 5 }}%, 0.9); height: {{ h }}px; margin-top: -{{ h_half }}px;">
                                         {{ layer.material }}
                                     </div>
                                     <!-- 左侧 -->
-                                    <div class="layer-face layer-face-left" style="background: hsla({{ hue }}, {{ saturation }}%, {{ lightness - 10 }}%, 0.9);">
+                                    <div class="layer-face layer-face-left" style="background: hsla({{ hue }}, {{ saturation }}%, {{ lightness - 10 }}%, 0.9); height: {{ h }}px; margin-top: -{{ h_half }}px;">
                                     </div>
                                     <!-- 右侧 -->
-                                    <div class="layer-face layer-face-right" style="background: hsla({{ hue }}, {{ saturation }}%, {{ lightness - 10 }}%, 0.9);">
+                                    <div class="layer-face layer-face-right" style="background: hsla({{ hue }}, {{ saturation }}%, {{ lightness - 10 }}%, 0.9); height: {{ h }}px; margin-top: -{{ h_half }}px;">
                                     </div>
                                     <!-- 顶部 -->
-                                    <div class="layer-face layer-face-top" style="background: hsla({{ hue }}, {{ saturation }}%, {{ lightness + 5 }}%, 0.9);">
+                                    <div class="layer-face layer-face-top" style="background: hsla({{ hue }}, {{ saturation }}%, {{ lightness + 5 }}%, 0.9); transform: rotateX(90deg) translateZ({{ h_half }}px);">
                                     </div>
                                     <!-- 底部 -->
-                                    <div class="layer-face layer-face-bottom" style="background: hsla({{ hue }}, {{ saturation }}%, {{ lightness - 15 }}%, 0.9);">
+                                    <div class="layer-face layer-face-bottom" style="background: hsla({{ hue }}, {{ saturation }}%, {{ lightness - 15 }}%, 0.9); transform: rotateX(-90deg) translateZ({{ h_half }}px);">
                                     </div>
                                     
                                     <!-- 层信息标签 -->
                                     <div class="layer-label">
-                                        <div class="layer-label-title">第{{ loop.index }}层: {{ layer.material }}</div>
-                                        <div class="layer-label-info">厚度: {{ layer.thickness }}nm | 禁带: {{ layer.bandgap }}eV</div>
+                                        <div class="layer-label-title">
+                                            {% if layer.name %}
+                                                {{ layer.name }}
+                                            {% else %}
+                                                第{{ loop.index }}层: {{ layer.material }}
+                                            {% endif %}
+                                        </div>
+                                        <div class="layer-label-info">
+                                            {% if layer.name %}{{ layer.material }} | {% endif %}
+                                            厚度: {{ layer.thickness }}nm | 禁带: {{ layer.bandgap }}eV
+                                        </div>
                                     </div>
                                 </div>
                                 {% endfor %}
@@ -518,14 +587,24 @@
                             <h6 class="mb-3"><i class="fas fa-list"></i> 层详细信息</h6>
                             {% for layer in design_data.layers %}
                             <div class="layer-item">
-                                <h5><i class="fas fa-square"></i> 第{{ loop.index }}层：{{ layer.material }}</h5>
+                                <h5>
+                                    <i class="fas fa-square"></i> 
+                                    {% if layer.name %}
+                                        {{ layer.name }} ({{ layer.material }})
+                                    {% else %}
+                                        第{{ loop.index }}层：{{ layer.material }}
+                                    {% endif %}
+                                </h5>
                                 <div class="row">
-                                    <div class="col-md-4"><strong>厚度：</strong>{{ layer.thickness }} nm</div>
+                                    <div class="col-md-4">
+                                        <strong>厚度：</strong>{{ layer.thickness }} nm
+                                    </div>
                                     <div class="col-md-4"><strong>禁带宽度：</strong>{{ layer.bandgap }} eV</div>
                                     <div class="col-md-12 mt-2"><strong>功能：</strong>{{ layer.function }}</div>
                                 </div>
                             </div>
                             {% endfor %}
+                            
                         </div>
                     {% else %}
                         <p class="text-muted">暂无层叠结构数据</p>
@@ -540,13 +619,21 @@
                             {% if images.structure %}
                             <div class="col-md-12 mb-4">
                                 <h6 class="text-center mb-3"><i class="fas fa-layer-group"></i> 层叠结构图</h6>
-                                <img src="{{ url_for('static', filename='images/structure.png') }}" alt="层叠结构图" class="visualization-img">
+                                <img src="/{{ images.structure }}" alt="层叠结构图" class="visualization-img">
                             </div>
                             {% endif %}
+                            
+                            {% if images.absorber %}
+                            <div class="col-md-12 mb-4">
+                                <h6 class="text-center mb-3"><i class="fas fa-microscope"></i> 吸收层细节图</h6>
+                                <img src="/{{ images.absorber }}" alt="吸收层细节图" class="visualization-img">
+                            </div>
+                            {% endif %}
+
                             {% if images.performance %}
                             <div class="col-md-12">
                                 <h6 class="text-center mb-3"><i class="fas fa-wave-square"></i> 光谱响应曲线</h6>
-                                <img src="{{ url_for('static', filename='images/performance.png') }}" alt="性能曲线" class="visualization-img">
+                                <img src="/{{ images.performance }}" alt="性能曲线" class="visualization-img">
                             </div>
                             {% endif %}
                         </div>
@@ -567,7 +654,11 @@
                         {% endif %}
                         {% if design_data.performance.quantum_efficiency %}
                         <div class="performance-item">
-                            <span class="performance-label"><i class="fas fa-percentage"></i> 量子效率</span>
+                            <span class="performance-label"><i class="fas fa-percentage"></i> 量子效率
+                                {% if design_data.performance.quantum_efficiency_type %}
+                                    <small class="text-muted">({{ design_data.performance.quantum_efficiency_type }})</small>
+                                {% endif %}
+                            </span>
                             <span class="performance-value">{{ design_data.performance.quantum_efficiency }}%</span>
                         </div>
                         {% endif %}
@@ -613,6 +704,10 @@
         </div>
     </div>
 
+    <script>
+        // Store the initial design data
+        let currentDesignData = {{ design_data | tojson | safe }};
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='js/result.js') }}"></script>
 </body>

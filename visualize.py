@@ -31,8 +31,16 @@ def generate_visualizations(design_data, task_id=None):
     
     # 生成层叠结构图
     if 'layers' in design_data and design_data['layers']:
-        structure_path = generate_structure_plot(design_data['layers'], prefix)
+        # 主结构图：隐藏吸收层的详细标签，避免拥挤
+        structure_path = generate_structure_plot(design_data['layers'], prefix, hide_absorber_labels=True)
         image_paths['structure'] = structure_path
+        
+        # 生成吸收层细节图
+        absorber_layers = [l for l in design_data['layers'] if '吸收' in l.get('name', '') or 'Absorber' in l.get('name', '')]
+        if absorber_layers:
+            # 细节图：显示所有标签
+            absorber_path = generate_structure_plot(absorber_layers, prefix + "absorber_", title="Absorber Layer Details", hide_absorber_labels=False)
+            image_paths['absorber'] = absorber_path
     
     # 生成性能曲线图
     if 'performance' in design_data and 'responsivity_data' in design_data['performance']:
@@ -41,45 +49,74 @@ def generate_visualizations(design_data, task_id=None):
     
     return image_paths
 
-def generate_structure_plot(layers, prefix=""):
+def generate_structure_plot(layers, prefix="", title="Detector Layer Structure", hide_absorber_labels=False):
     """
     生成叠层结构的堆叠条形图
     
     Args:
         layers: 层结构列表
         prefix: 文件名前缀
+        title: 图表标题
+        hide_absorber_labels: 是否隐藏吸收层的标签
         
     Returns:
         str: 图像相对路径
     """
-    fig, ax = plt.subplots(figsize=(10, 6))
+    # 增加画布高度以容纳外部标签
+    fig, ax = plt.subplots(figsize=(12, 8))
     
     # 提取数据
     materials = [layer['material'] for layer in layers]
+    names = [layer.get('name', '') for layer in layers]
     thicknesses = [layer['thickness'] for layer in layers]
+    total_thickness = sum(thicknesses)
     
     # 创建颜色映射
     colors = plt.cm.viridis(np.linspace(0.2, 0.9, len(materials)))
     
     # 绘制堆叠条形图
     bottom = 0
-    for i, (material, thickness) in enumerate(zip(materials, thicknesses)):
+    for i, (material, thickness, name) in enumerate(zip(materials, thicknesses, names)):
         ax.barh(0, thickness, left=bottom, height=0.5, 
                color=colors[i], label=f'{material} ({thickness} nm)',
                edgecolor='black', linewidth=1.5)
         
-        # 添加文本标签
-        ax.text(bottom + thickness/2, 0, f'{material}\n{thickness}nm', 
-               ha='center', va='center', fontsize=10, fontweight='bold')
+        # 检查是否需要隐藏该层的标签
+        is_absorber = '吸收' in name or 'Absorber' in name
+        should_label = not (hide_absorber_labels and is_absorber)
+        
+        if should_label:
+            # 智能标签定位
+            mid_x = bottom + thickness / 2
+            ratio = thickness / total_thickness
+            
+            # 如果层足够厚(>15%)，标签放在内部
+            if ratio > 0.15:
+                ax.text(mid_x, 0, f'{material}\n{thickness}nm', 
+                       ha='center', va='center', fontsize=10, fontweight='bold', color='white')
+            # 如果层较薄，使用引线标注在外部
+            else:
+                # 交替上下显示，避免重叠
+                is_top = i % 2 == 0
+                y_pos = 0.45 if is_top else -0.45
+                
+                ax.annotate(f'{material}\n{thickness}nm',
+                           xy=(mid_x, 0.25 if is_top else -0.25),
+                           xytext=(mid_x, y_pos),
+                           ha='center', va='center',
+                           fontsize=10, fontweight='bold',
+                           arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=0'))
         
         bottom += thickness
     
-    ax.set_ylim(-0.5, 0.5)
+    ax.set_ylim(-0.6, 0.6)
     ax.set_xlim(0, bottom * 1.05)
     ax.set_xlabel('Thickness (nm)', fontsize=12, fontweight='bold')
-    ax.set_title('Detector Layer Structure', fontsize=14, fontweight='bold')
+    ax.set_title(title, fontsize=14, fontweight='bold')
     ax.set_yticks([])
-    ax.legend(loc='upper left', bbox_to_anchor=(1, 1), fontsize=9)
+    
+    # 调整图例位置到图表下方，避免挤压绘图区域
+    ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.1), fontsize=10, ncol=3)
     ax.grid(axis='x', alpha=0.3)
     
     plt.tight_layout()

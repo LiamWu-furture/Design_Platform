@@ -29,9 +29,13 @@ SYSTEM_PROMPT = """你是一位专业的光电探测器设计专家，精通半�
 请严格按照JSON格式输出设计结果，包含layers（层结构）、performance（性能参数）、optimization_suggestions（优化建议）和explanation（设计说明）。
 """
 
-def call_deepseek_api(user_prompt):
+def call_deepseek_api(user_prompt, model="deepseek-reasoner"):
     """
-    调用DeepSeek R1 API进行探测器设计（非流式）
+    调用DeepSeek API进行探测器设计（非流式）
+    
+    Args:
+        user_prompt: 用户提示词
+        model: 模型名称，默认为 "deepseek-reasoner" (R1)，可选 "deepseek-chat" (V3)
     """
     if not client:
         return {
@@ -46,7 +50,7 @@ def call_deepseek_api(user_prompt):
         ]
         
         response = client.chat.completions.create(
-            model="deepseek-reasoner",
+            model=model,
             messages=messages,
             stream=False
         )

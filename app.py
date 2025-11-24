@@ -105,16 +105,25 @@ def api_design():
 目标应用: {target_application}
 额外要求: {additional_requirements}
 
+请务必包含完整的层叠结构，必须明确包含以下功能层：
+1. 顶电极 (Top Electrode)
+2. 电子传输层 (Electron Transport Layer, ETL)
+3. 光吸收层 (Absorber Layer) - **特别要求**：光吸收层严禁使用单一均质材料。请将其设计为复合结构（如量子阱结构、超晶格结构、异质结或梯度带隙结构），并在返回的layers列表中将其拆分为具体的子层（例如："吸收层(量子阱)"、"吸收层(量子垒)"等）。
+4. 空穴传输层 (Hole Transport Layer, HTL)
+5. 底电极 (Bottom Electrode)
+以及其他必要的缓冲层或接触层。
+
 请以JSON格式返回设计结果，包含以下字段：
 {{
     "layers": [
-        {{"material": "材料名称", "thickness": 厚度值(nm), "bandgap": 禁带宽度(eV), "function": "功能描述"}},
+        {{"name": "层名称(如:顶电极/ETL/吸收层/HTL/底电极)", "material": "材料名称", "thickness": 厚度值(nm), "bandgap": 禁带宽度(eV), "function": "详细功能描述"}},
         ...
     ],
     "performance": {{
         "wavelength_range": [最小波长(nm), 最大波长(nm)],
         "responsivity_data": [[波长1, 响应度1], [波长2, 响应度2], ...],
         "quantum_efficiency": 量子效率(%),
+        "quantum_efficiency_type": "IQE"或"EQE" (明确注明是内量子效率还是外量子效率),
         "dark_current": 暗电流(A)
     }},
     "optimization_suggestions": ["建议1", "建议2", ...],
@@ -137,6 +146,32 @@ def api_design():
                     
                     # 生成可视化
                     image_paths = generate_visualizations(design_data)
+                    
+                    # 赋予每一层视觉属性
+                    # 在3D wrapper中居中
+                    # 添加层间距
+                    GAP = 10
+                    NORMAL_HEIGHT = 40
+                    ABSORBER_HEIGHT = 20
+                    
+                    # 计算总视觉高度
+                    total_visual_height = 0
+                    for layer in design_data['layers']:
+                        is_absorber = '吸收' in layer.get('name', '') or 'Absorber' in layer.get('name', '')
+                        h = ABSORBER_HEIGHT if is_absorber else NORMAL_HEIGHT
+                        layer['visual_height'] = h
+                        total_visual_height += h
+                    
+                    if design_data['layers']:
+                        total_visual_height += (len(design_data['layers']) - 1) * GAP
+                    
+                    start_y = (400 - total_visual_height) / 2
+                    
+                    current_y = start_y
+                    for i, layer in enumerate(design_data['layers']):
+                        # 计算每一层的Y坐标
+                        layer['y_position'] = current_y
+                        current_y += layer['visual_height'] + GAP
                     
                     # 保存结果
                     result_data = {
@@ -209,16 +244,25 @@ def design():
 目标应用: {target_application}
 额外要求: {additional_requirements}
 
+请务必包含完整的层叠结构，必须明确包含以下功能层：
+1. 顶电极 (Top Electrode)
+2. 电子传输层 (Electron Transport Layer, ETL)
+3. 光吸收层 (Absorber Layer) - **特别要求**：光吸收层严禁使用单一均质材料。请将其设计为复合结构（如量子阱结构、超晶格结构、异质结或梯度带隙结构），并在返回的layers列表中将其拆分为具体的子层（例如："吸收层(量子阱)"、"吸收层(量子垒)"等）。
+4. 空穴传输层 (Hole Transport Layer, HTL)
+5. 底电极 (Bottom Electrode)
+以及其他必要的缓冲层或接触层。
+
 请以JSON格式返回设计结果，包含以下字段：
 {{
     "layers": [
-        {{"material": "材料名称", "thickness": 厚度值(nm), "bandgap": 禁带宽度(eV), "function": "功能描述"}},
+        {{"name": "层名称(如:顶电极/ETL/吸收层/HTL/底电极)", "material": "材料名称", "thickness": 厚度值(nm), "bandgap": 禁带宽度(eV), "function": "详细功能描述"}},
         ...
     ],
     "performance": {{
         "wavelength_range": [最小波长(nm), 最大波长(nm)],
         "responsivity_data": [[波长1, 响应度1], [波长2, 响应度2], ...],
         "quantum_efficiency": 量子效率(%),
+        "quantum_efficiency_type": "IQE"或"EQE" (明确注明是内量子效率还是外量子效率),
         "dark_current": 暗电流(A)
     }},
     "optimization_suggestions": ["建议1", "建议2", ...],
