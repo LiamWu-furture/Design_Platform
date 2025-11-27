@@ -120,7 +120,7 @@ def generate_design_stream(prompt, model_type='deepseek-reasoner'):
                     preview = reasoning_content[-50:].replace('\n', ' ')
                     yield json.dumps({
                         'step': 4,
-                        'message': f'🧠 {model_display}推理中: ...{preview}',
+                        'message': f' {model_display}推理中: ...{preview}',
                         'progress': current_progress,
                         'log': True
                     }) + '\n'
@@ -143,7 +143,7 @@ def generate_design_stream(prompt, model_type='deepseek-reasoner'):
         
         yield json.dumps({
             'step': 4,
-            'message': f'📝 推理完成！推理 {len(reasoning_content)} 字符，方案 {len(content)} 字符',
+            'message': f' 推理完成！推理 {len(reasoning_content)} 字符，方案 {len(content)} 字符',
             'progress': 75,
             'log': True
         }) + '\n'
@@ -200,7 +200,7 @@ def call_deepseek_api_stream(user_prompt, log_callback=None):
     
     try:
         if log_callback:
-            log_callback('🔗 连接DeepSeek R1 API...')
+            log_callback('🔗 连接推理大模型 API...')
         
         messages = [
             {'role': 'system', 'content': SYSTEM_PROMPT},
@@ -208,7 +208,7 @@ def call_deepseek_api_stream(user_prompt, log_callback=None):
         ]
         
         if log_callback:
-            log_callback('📡 发送设计请求到R1模型...')
+            log_callback('📡 发送设计请求到深度学习模型...')
         
         response = client.chat.completions.create(
             model="deepseek-reasoner",
@@ -233,7 +233,7 @@ def call_deepseek_api_stream(user_prompt, log_callback=None):
                 
                 # 每收到20个推理chunk输出一次日志
                 if reasoning_count % 20 == 0 and log_callback:
-                    log_callback(f'🧠 R1正在深度推理... (推理 {len(reasoning_content)} 字符)')
+                    log_callback(f' R1正在深度推理... (推理 {len(reasoning_content)} 字符)')
             
             # 处理最终内容
             elif chunk.choices[0].delta.content:
@@ -243,10 +243,10 @@ def call_deepseek_api_stream(user_prompt, log_callback=None):
                 
                 # 每收到10个内容chunk输出一次日志
                 if content_count % 10 == 0 and log_callback:
-                    log_callback(f'✨ R1正在生成方案... (已生成 {len(content)} 字符)')
+                    log_callback(f' R1正在生成方案... (已生成 {len(content)} 字符)')
         
         if log_callback:
-            log_callback(f'📝 推理完成！推理过程 {len(reasoning_content)} 字符，方案 {len(content)} 字符')
+            log_callback(f' 推理完成！推理过程 {len(reasoning_content)} 字符，方案 {len(content)} 字符')
         
         return {
             'status': 'success',
