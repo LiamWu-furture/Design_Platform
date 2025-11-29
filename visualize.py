@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import matplotlib
 import numpy as np
 import os
+import re
 
 # 使用非交互式后端
 matplotlib.use('Agg')
@@ -9,6 +10,25 @@ matplotlib.use('Agg')
 # 设置中文字体
 plt.rcParams['font.sans-serif'] = ['SimHei', 'DejaVu Sans']
 plt.rcParams['axes.unicode_minus'] = False
+
+def format_chemical_formula(text):
+    """
+    将化学式中的数字转换为下标格式 (LaTeX)
+    例如: TiO2 -> TiO$_2$, Al2O3 -> Al$_2$O$_3$
+    """
+    if not text:
+        return ""
+    
+    # 如果已经是LaTeX格式或者包含其他特殊字符，可能不需要处理
+    if '$' in text:
+        return text
+        
+    # 匹配化学式中的数字，将其替换为 $_{数字}$
+    # 排除掉可能是厚度或其他数值的情况（这里简单假设紧跟在字母后的数字是化学式下标）
+    # 使用正则：([a-zA-Z])(\d+) -> \1$_{\2}$
+    formatted_text = re.sub(r'([a-zA-Z])(\d+)', r'\1$_{\2}$', text)
+    
+    return formatted_text
 
 def generate_visualizations(design_data, task_id=None):
     """

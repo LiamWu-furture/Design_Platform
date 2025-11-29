@@ -81,7 +81,7 @@ def generate_design_stream(prompt, model_type='deepseek-reasoner'):
         return
 
     # 确定模型显示名称
-    model_display = "DeepSeek R1" if model_type == 'deepseek-reasoner' else "DeepSeek V3"
+    model_display = "AI推理模型" if model_type == 'deepseek-reasoner' else "AI大模型"
 
     yield json.dumps({'step': 3, 'message': f'调用{model_display} API', 'progress': 30}) + '\n'
     time.sleep(0.3)
@@ -233,7 +233,7 @@ def call_deepseek_api_stream(user_prompt, log_callback=None):
                 
                 # 每收到20个推理chunk输出一次日志
                 if reasoning_count % 20 == 0 and log_callback:
-                    log_callback(f' R1正在深度推理... (推理 {len(reasoning_content)} 字符)')
+                    log_callback(f' AI正在深度推理... (推理 {len(reasoning_content)} 字符)')
             
             # 处理最终内容
             elif chunk.choices[0].delta.content:
@@ -243,7 +243,7 @@ def call_deepseek_api_stream(user_prompt, log_callback=None):
                 
                 # 每收到10个内容chunk输出一次日志
                 if content_count % 10 == 0 and log_callback:
-                    log_callback(f' R1正在生成方案... (已生成 {len(content)} 字符)')
+                    log_callback(f' AI正在生成方案... (已生成 {len(content)} 字符)')
         
         if log_callback:
             log_callback(f' 推理完成！推理过程 {len(reasoning_content)} 字符，方案 {len(content)} 字符')

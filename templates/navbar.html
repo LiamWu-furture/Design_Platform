@@ -73,7 +73,7 @@
     }
     
     .navbar-logo img {
-        height: 40px;
+        height: 55px; /* 加大PC端Logo */
         width: auto;
         object-fit: contain;
     }
@@ -131,42 +131,64 @@
         .navbar-container {
             flex-direction: column;
             height: auto;
-            padding: 10px;
-            gap: 10px;
+            padding: 10px 10px;
+            gap: 8px;
+        }
+        
+        .navbar-logo {
+            order: -1; /* 将Logo移动到最上方 */
+            width: 100%;
+            justify-content: center; /* Logo居中显示 */
+            padding-bottom: 5px;
+            border-bottom: 1px solid rgba(255,255,255,0.1); /* 可选：加一条分割线 */
+            margin-bottom: 5px;
+        }
+        
+        .navbar-logo img {
+            height: 50px; /* 加大移动端Logo */
+            width: auto;
         }
         
         .navbar-brand {
             font-size: 16px;
+            width: 100%;
+            justify-content: center; /* 标题居中 */
+            margin-bottom: 5px;
         }
         
         .navbar-brand i {
             font-size: 20px;
         }
         
+        /* 在非常小的屏幕上精简标题文字 */
+        @media (max-width: 360px) {
+            .navbar-brand span {
+                font-size: 14px;
+            }
+        }
+        
         .navbar-tabs {
             width: 100%;
-            justify-content: space-around;
-        }
-        
-        .navbar-logo {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-        }
-        
-        .navbar-logo img {
-            height: 30px;
+            justify-content: space-between; /* 标签页均匀分布 */
         }
         
         .nav-tab {
             flex-direction: column;
             gap: 4px;
-            padding: 8px 12px;
+            padding: 8px 10px;
             font-size: 12px;
+            flex: 1; /* 平分宽度 */
+            justify-content: center;
+        }
+        
+        .nav-tab i {
+            font-size: 16px;
+            margin-bottom: 2px;
         }
         
         .nav-tab span {
             font-size: 11px;
+            line-height: 1.2;
         }
     }
 </style>
