@@ -1,0 +1,52 @@
+# 宝塔面板 (BT Panel) Python 项目部署指南
+
+## 1. 环境准备
+确保你的宝塔面板已安装 **Python项目管理器** (建议使用 2.0 或更高版本)。
+
+## 2. 上传代码
+将整个项目文件夹上传到服务器，例如：`/www/wwwroot/DetectorDesign`
+
+## 3. 添加项目
+在宝塔面板 -> 网站 -> Python项目 -> 添加Python项目：
+
+*   **项目名称**: DetectorDesign (自定义)
+*   **路径**: 选择上传的文件夹 `/www/wwwroot/DetectorDesign`
+*   **Python版本**: 建议选择 Python 3.8 或以上
+*   **框架**: Flask
+*   **启动方式**: Gunicorn
+*   **启动文件**: `wsgi.py` (或者可以直接选 `app.py`，但建议选 `wsgi.py`)
+*   **应用变量**: `app`
+*   **端口**: 自定义，例如 `8000`
+*   **勾选 "安装依赖"**: 让宝塔自动读取 `requirements.txt` 安装模块
+
+## 4. 关键配置 (非常重要！)
+添加项目后，点击项目名称进入 **配置** 页面：
+
+1.  **配置文件 (Config)**:
+    宝塔默认的配置可能不支持长连接和流式输出。
+    请在配置界面找到 Gunicorn 配置部分，或者手动修改项目目录下的 `gunicorn_conf.py` (如果有自动生成) 或 指定我们创建的配置。
+    
+    **最简单的方法**是在项目设置的【配置文件】或【Gunicorn配置】中，确保参数如下：
+    *   **超时时间 (timeout)**: 修改为 `600` (默认为30秒，AI生成一定会超时报错)
+    *   **工作模式 (worker_class)**: 修改为 `gevent` (默认为 sync，会导致流式输出卡顿或缓冲)
+    
+    如果宝塔允许指定配置文件路径，请指定项目根目录下的: `gunicorn_config.py`
+
+2.  **环境变量**:
+    如果需要设置 `FLASK_SECRET_KEY` 或其他 API Key，可以在项目设置的【环境变量】中添加。
+    *   `DEEPSEEK_API_KEY`: 你的 DeepSeek API 密钥
+    *   `FLASK_SECRET_KEY`: 任意随机字符串
+
+## 5. Nginx 反向代理 (可选)
+如果通过域名访问，点击【映射】添加域名。
+确保 Nginx 配置中（点击配置文件的 "Nginx配置"）添加了流式传输支持：
+```nginx
+# 在 location / 下添加
+proxy_buffering off;
+proxy_cache off;
+proxy_read_timeout 600s;
+```
+
+## 6. 常见问题
+*   **502 Bad Gateway**: 通常是因为超时。检查 Gunicorn 的 `timeout` 设置是否大于 300。
+*   **流式字是一次性蹦出来的**: 检查 Gunicorn `worker_class` 是否为 `gevent`，以及 Nginx 是否关闭了 buffering (`proxy_buffering off;`)。
