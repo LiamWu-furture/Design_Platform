@@ -116,7 +116,7 @@ def api_design():
 请以JSON格式返回设计结果，包含以下字段：
 {{
     "layers": [
-        {{"name": "层名称(如:顶电极/ETL/吸收层/HTL/底电极)", "material": "材料名称", "thickness": 厚度值(nm), "bandgap": 禁带宽度(eV), "function": "详细功能描述"}},
+        {{"name": "层名称(如:顶电极/ETL/吸收层/HTL/底电极)", "material": "材料名称", "thickness": 厚度值(nm), "bandgap": 禁带宽度(eV), "function": "详细功能描述", "fabrication_process": "详细制备工艺"}},
         ...
     ],
     "performance": {{
@@ -255,7 +255,7 @@ def design():
 请以JSON格式返回设计结果，包含以下字段：
 {{
     "layers": [
-        {{"name": "层名称(如:顶电极/ETL/吸收层/HTL/底电极)", "material": "材料名称", "thickness": 厚度值(nm), "bandgap": 禁带宽度(eV), "function": "详细功能描述"}},
+        {{"name": "层名称(如:顶电极/ETL/吸收层/HTL/底电极)", "material": "材料名称", "thickness": 厚度值(nm), "bandgap": 禁带宽度(eV), "function": "详细功能描述", "fabrication_process": "详细制备工艺"}},
         ...
     ],
     "performance": {{

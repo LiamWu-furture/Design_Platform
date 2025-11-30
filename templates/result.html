@@ -601,6 +601,9 @@
                                     </div>
                                     <div class="col-md-4"><strong>禁带宽度：</strong>{{ layer.bandgap }} eV</div>
                                     <div class="col-md-12 mt-2"><strong>功能：</strong>{{ layer.function }}</div>
+                                    {% if layer.fabrication_process %}
+                                    <div class="col-md-12 mt-2"><strong>制备工艺：</strong>{{ layer.fabrication_process }}</div>
+                                    {% endif %}
                                 </div>
                             </div>
                             {% endfor %}
