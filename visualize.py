@@ -37,7 +37,7 @@ def generate_visualizations(design_data, task_id=None):
 
 def generate_structure_plot(layers, prefix=""):
     """
-    使用 pyecharts 生成叠层结构的堆叠条形图
+    使用 pyecharts 生成水平层叠结构图（从底到顶）
     
     Args:
         layers: 层结构列表
@@ -46,83 +46,107 @@ def generate_structure_plot(layers, prefix=""):
     Returns:
         str: 图像相对路径
     """
-    # 提取数据
-    layer_names = [layer.get('name', layer['material']) for layer in layers]
-    materials = [layer['material'] for layer in layers]
-    thicknesses = [layer['thickness'] for layer in layers]
-    total_thickness = sum(thicknesses)
+    from pyecharts.charts import Bar
     
-    # 定义渐变色系
-    colors = [
+    # 提取数据（反转顺序，从底层到顶层）
+    layers_reversed = list(reversed(layers))
+    layer_labels = []
+    thicknesses = []
+    colors_list = []
+    
+    # 定义专业配色方案
+    color_palette = [
         '#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de',
-        '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc', '#5470c6'
+        '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc', '#73a9c6'
     ]
     
-    # 创建堆叠条形图
+    total_thickness = sum(layer['thickness'] for layer in layers)
+    
+    # 构建数据
+    for i, layer in enumerate(layers_reversed):
+        name = layer.get('name', layer['material'])
+        material = layer['material']
+        thickness = layer['thickness']
+        
+        # 构建标签：层名 + 材料 + 厚度
+        if name != material:
+            label = f"{name}\n{material}\n{thickness}nm"
+        else:
+            label = f"{material}\n{thickness}nm"
+        
+        layer_labels.append(label)
+        thicknesses.append(thickness)
+        colors_list.append(color_palette[i % len(color_palette)])
+    
+    # 创建水平条形图
     bar = (
         Bar(init_opts=opts.InitOpts(
             theme=ThemeType.LIGHT,
             width="100%",
-            height="600px",
+            height=f"{max(600, len(layers) * 80)}px",  # 根据层数动态调整高度
             bg_color="#ffffff"
         ))
-        .add_xaxis(["Layer Stack"])
-    )
-    
-    # 添加每一层，智能显示标签
-    for i, (name, material, thickness) in enumerate(zip(layer_names, materials, thicknesses)):
-        # 计算该层占总厚度的比例
-        thickness_ratio = thickness / total_thickness if total_thickness > 0 else 0
-        
-        # 如果层厚度占比小于8%，则不在内部显示标签（太窄会显得拥挤）
-        show_inside_label = thickness_ratio >= 0.08
-        
-        bar.add_yaxis(
-            series_name=f"{name} ({thickness}nm)",  # 图例中显示完整信息
-            y_axis=[thickness],
-            stack="stack1",
+        .add_xaxis(layer_labels)
+        .add_yaxis(
+            series_name="Thickness",
+            y_axis=thicknesses,
             label_opts=opts.LabelOpts(
-                is_show=show_inside_label,  # 只有足够宽的层才显示内部标签
-                position="inside",
-                formatter="{c}nm",  # 简化显示，只显示厚度
-                font_size=11,
+                is_show=True,
+                position="right",
+                formatter="{c} nm",
+                font_size=13,
                 font_weight="bold",
-                color="white"
+                color="#333"
             ),
             itemstyle_opts=opts.ItemStyleOpts(
-                color=colors[i % len(colors)],
+                color=opts.JsCode("""
+                    function(params) {{
+                        var colorList = {colors};
+                        return colorList[params.dataIndex];
+                    }}
+                """.format(colors=colors_list)),
                 border_color="#fff",
                 border_width=2
             ),
         )
-    
-    bar.set_global_opts(
-        title_opts=opts.TitleOpts(
-            title="Detector Layer Structure",
-            subtitle=f"Total Thickness: {sum(thicknesses)} nm | {len(layers)} Layers",
-            title_textstyle_opts=opts.TextStyleOpts(font_size=20, font_weight="bold"),
-            subtitle_textstyle_opts=opts.TextStyleOpts(font_size=14, color="#666")
-        ),
-        xaxis_opts=opts.AxisOpts(
-            name="",
-            axislabel_opts=opts.LabelOpts(font_size=12)
-        ),
-        yaxis_opts=opts.AxisOpts(
-            name="Thickness (nm)",
-            name_textstyle_opts=opts.TextStyleOpts(font_size=14, font_weight="bold"),
-            axislabel_opts=opts.LabelOpts(font_size=12)
-        ),
-        legend_opts=opts.LegendOpts(
-            pos_right="2%",
-            pos_top="10%",
-            orient="vertical",
-            textstyle_opts=opts.TextStyleOpts(font_size=12)
-        ),
-        tooltip_opts=opts.TooltipOpts(
-            trigger="axis",
-            axis_pointer_type="shadow",
-            formatter="{b}<br/>{a}: {c} nm"
-        ),
+        .reversal_axis()  # 反转坐标轴，变成水平条形图
+        .set_global_opts(
+            title_opts=opts.TitleOpts(
+                title="Detector Layer Structure",
+                subtitle=f"Total: {total_thickness} nm | {len(layers)} Layers | Bottom → Top",
+                title_textstyle_opts=opts.TextStyleOpts(font_size=22, font_weight="bold"),
+                subtitle_textstyle_opts=opts.TextStyleOpts(font_size=14, color="#666"),
+                pos_left="center"
+            ),
+            xaxis_opts=opts.AxisOpts(
+                name="Thickness (nm)",
+                name_location="middle",
+                name_gap=35,
+                name_textstyle_opts=opts.TextStyleOpts(font_size=14, font_weight="bold"),
+                axislabel_opts=opts.LabelOpts(font_size=12),
+                splitline_opts=opts.SplitLineOpts(is_show=True, linestyle_opts=opts.LineStyleOpts(opacity=0.2))
+            ),
+            yaxis_opts=opts.AxisOpts(
+                axislabel_opts=opts.LabelOpts(
+                    font_size=12,
+                    font_weight="bold",
+                    interval=0,  # 显示所有标签
+                    rotate=0
+                ),
+                axisline_opts=opts.AxisLineOpts(is_show=True),
+                axisTick_opts=opts.AxisTickOpts(is_show=True)
+            ),
+            tooltip_opts=opts.TooltipOpts(
+                trigger="axis",
+                axis_pointer_type="shadow",
+                formatter="{b}<br/>Thickness: {c} nm",
+                background_color="rgba(50,50,50,0.9)",
+                border_color="#333",
+                border_width=1,
+                textstyle_opts=opts.TextStyleOpts(color="#fff", font_size=13)
+            ),
+            legend_opts=opts.LegendOpts(is_show=False),  # 隐藏图例，信息已在坐标轴显示
+        )
     )
     
     output_path = f'static/images/{prefix}structure.html'
