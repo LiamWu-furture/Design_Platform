@@ -700,11 +700,11 @@
         </div>
     </div>
 
+    <script src="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/result.js') }}"></script>
     <script>
         // Store the initial design data
         let currentDesignData = {{ design_data | tojson | safe }};
     </script>
-    <script src="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ url_for('static', filename='js/result.js') }}"></script>
 </body>
 </html>
