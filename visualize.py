@@ -135,7 +135,7 @@ def generate_structure_plot(layers, prefix=""):
                     rotate=0
                 ),
                 axisline_opts=opts.AxisLineOpts(is_show=True),
-                axisTick_opts=opts.AxisTickOpts(is_show=True)
+                axistick_opts=opts.AxisTickOpts(is_show=True)
             ),
             tooltip_opts=opts.TooltipOpts(
                 trigger="axis",
