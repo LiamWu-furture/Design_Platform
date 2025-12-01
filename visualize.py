@@ -2,6 +2,7 @@ import os
 from pyecharts import options as opts
 from pyecharts.charts import Bar, Line
 from pyecharts.globals import ThemeType
+from pyecharts.commons.utils import JsCode
 
 
 def generate_visualizations(design_data, task_id=None):
@@ -99,7 +100,7 @@ def generate_structure_plot(layers, prefix=""):
                 color="#333"
             ),
             itemstyle_opts=opts.ItemStyleOpts(
-                color=opts.JsCode("""
+                color=JsCode("""
                     function(params) {{
                         var colorList = {colors};
                         return colorList[params.dataIndex];

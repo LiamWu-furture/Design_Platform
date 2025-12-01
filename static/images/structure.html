@@ -8,11 +8,12 @@
     
 </head>
 <body >
-    <div id="1ffcb70c97144f369e05d198350bdfdd" class="chart-container" style="width:100%; height:500px; "></div>
+    <div id="e9d22319c49f42ab96d0b05a90e84c2d" class="chart-container" style="width:100%; height:600px; "></div>
     <script>
-        var chart_1ffcb70c97144f369e05d198350bdfdd = echarts.init(
-            document.getElementById('1ffcb70c97144f369e05d198350bdfdd'), 'light', {renderer: 'canvas', locale: 'ZH'});
-        var option_1ffcb70c97144f369e05d198350bdfdd = {
+        var chart_e9d22319c49f42ab96d0b05a90e84c2d = echarts.init(
+            document.getElementById('e9d22319c49f42ab96d0b05a90e84c2d'), 'light', {renderer: 'canvas', locale: 'ZH'});
+        var option_e9d22319c49f42ab96d0b05a90e84c2d = {
+    "backgroundColor": "#ffffff",
     "animation": true,
     "animationThreshold": 2000,
     "animationDuration": 1000,
@@ -27,10 +28,10 @@
     "series": [
         {
             "type": "bar",
-            "name": "1. \u9876\u7535\u6781 - ITO (\u6c27\u5316\u94df\u9521)",
+            "name": "\u9876\u7535\u6781 (80nm)",
             "legendHoverLink": true,
             "data": [
-                100
+                80
             ],
             "realtimeSort": false,
             "showBackground": false,
@@ -50,46 +51,63 @@
             "label": {
                 "show": true,
                 "position": "inside",
+                "color": "white",
                 "margin": 8,
                 "fontSize": 11,
-                "formatter": "{c} nm",
+                "fontWeight": "bold",
+                "formatter": "{c}nm",
                 "valueAnimation": false
             },
-            "tooltip": {
-                "show": true,
-                "trigger": "item",
-                "triggerOn": "mousemove|click",
-                "axisPointer": {
-                    "type": "line"
-                },
-                "showContent": true,
-                "alwaysShowContent": false,
-                "showDelay": 0,
-                "hideDelay": 100,
-                "enterable": false,
-                "confine": false,
-                "appendToBody": false,
-                "transitionDuration": 0.4,
-                "formatter": "1. \u9876\u7535\u6781 - ITO (\u6c27\u5316\u94df\u9521)<br/>Thickness: 100 nm<br/>Bandgap: 3.5 eV",
-                "textStyle": {
-                    "fontSize": 14
-                },
-                "borderWidth": 0,
-                "padding": 5,
-                "order": "seriesAsc"
-            },
             "itemStyle": {
-                "borderColor": "white",
-                "borderWidth": 1,
-                "opacity": 0.9
+                "color": "#5470c6",
+                "borderColor": "#fff",
+                "borderWidth": 2
             }
         },
         {
             "type": "bar",
-            "name": "2. \u7535\u5b50\u4f20\u8f93\u5c42(ETL) - TiO\u2082 (\u4e8c\u6c27\u5316\u949b)",
+            "name": "\u7535\u5b50\u4f20\u8f93\u5c42 (ETL) (30nm)",
             "legendHoverLink": true,
             "data": [
-                50
+                30
+            ],
+            "realtimeSort": false,
+            "showBackground": false,
+            "stack": "stack1",
+            "stackStrategy": "samesign",
+            "cursor": "pointer",
+            "barMinHeight": 0,
+            "barCategoryGap": "20%",
+            "barGap": "30%",
+            "large": false,
+            "largeThreshold": 400,
+            "seriesLayoutBy": "column",
+            "datasetIndex": 0,
+            "clip": true,
+            "zlevel": 0,
+            "z": 2,
+            "label": {
+                "show": false,
+                "position": "inside",
+                "color": "white",
+                "margin": 8,
+                "fontSize": 11,
+                "fontWeight": "bold",
+                "formatter": "{c}nm",
+                "valueAnimation": false
+            },
+            "itemStyle": {
+                "color": "#91cc75",
+                "borderColor": "#fff",
+                "borderWidth": 2
+            }
+        },
+        {
+            "type": "bar",
+            "name": "\u5149\u5438\u6536\u5c42 (150nm)",
+            "legendHoverLink": true,
+            "data": [
+                150
             ],
             "realtimeSort": false,
             "showBackground": false,
@@ -109,43 +127,22 @@
             "label": {
                 "show": true,
                 "position": "inside",
+                "color": "white",
                 "margin": 8,
                 "fontSize": 11,
-                "formatter": "{c} nm",
+                "fontWeight": "bold",
+                "formatter": "{c}nm",
                 "valueAnimation": false
             },
-            "tooltip": {
-                "show": true,
-                "trigger": "item",
-                "triggerOn": "mousemove|click",
-                "axisPointer": {
-                    "type": "line"
-                },
-                "showContent": true,
-                "alwaysShowContent": false,
-                "showDelay": 0,
-                "hideDelay": 100,
-                "enterable": false,
-                "confine": false,
-                "appendToBody": false,
-                "transitionDuration": 0.4,
-                "formatter": "2. \u7535\u5b50\u4f20\u8f93\u5c42(ETL) - TiO\u2082 (\u4e8c\u6c27\u5316\u949b)<br/>Thickness: 50 nm<br/>Bandgap: 3.2 eV",
-                "textStyle": {
-                    "fontSize": 14
-                },
-                "borderWidth": 0,
-                "padding": 5,
-                "order": "seriesAsc"
-            },
             "itemStyle": {
-                "borderColor": "white",
-                "borderWidth": 1,
-                "opacity": 0.9
+                "color": "#fac858",
+                "borderColor": "#fff",
+                "borderWidth": 2
             }
         },
         {
             "type": "bar",
-            "name": "3. \u5438\u6536\u5c42(\u91cf\u5b50\u5792) - a-Si:H (\u6c22\u5316\u975e\u6676\u7845)",
+            "name": "\u7a7a\u7a74\u4f20\u8f93\u5c42 (HTL) (10nm)",
             "legendHoverLink": true,
             "data": [
                 10
@@ -166,48 +163,27 @@
             "zlevel": 0,
             "z": 2,
             "label": {
-                "show": true,
+                "show": false,
                 "position": "inside",
+                "color": "white",
                 "margin": 8,
                 "fontSize": 11,
-                "formatter": "{c} nm",
+                "fontWeight": "bold",
+                "formatter": "{c}nm",
                 "valueAnimation": false
             },
-            "tooltip": {
-                "show": true,
-                "trigger": "item",
-                "triggerOn": "mousemove|click",
-                "axisPointer": {
-                    "type": "line"
-                },
-                "showContent": true,
-                "alwaysShowContent": false,
-                "showDelay": 0,
-                "hideDelay": 100,
-                "enterable": false,
-                "confine": false,
-                "appendToBody": false,
-                "transitionDuration": 0.4,
-                "formatter": "3. \u5438\u6536\u5c42(\u91cf\u5b50\u5792) - a-Si:H (\u6c22\u5316\u975e\u6676\u7845)<br/>Thickness: 10 nm<br/>Bandgap: 1.75 eV",
-                "textStyle": {
-                    "fontSize": 14
-                },
-                "borderWidth": 0,
-                "padding": 5,
-                "order": "seriesAsc"
-            },
             "itemStyle": {
-                "borderColor": "white",
-                "borderWidth": 1,
-                "opacity": 0.9
+                "color": "#ee6666",
+                "borderColor": "#fff",
+                "borderWidth": 2
             }
         },
         {
             "type": "bar",
-            "name": "4. \u5438\u6536\u5c42(\u91cf\u5b50\u9631) - a-SiGe:H (\u6c22\u5316\u975e\u6676\u7845\u9517)",
+            "name": "\u5e95\u7535\u6781 (150nm)",
             "legendHoverLink": true,
             "data": [
-                5
+                150
             ],
             "realtimeSort": false,
             "showBackground": false,
@@ -227,478 +203,41 @@
             "label": {
                 "show": true,
                 "position": "inside",
+                "color": "white",
                 "margin": 8,
                 "fontSize": 11,
-                "formatter": "{c} nm",
+                "fontWeight": "bold",
+                "formatter": "{c}nm",
                 "valueAnimation": false
             },
-            "tooltip": {
-                "show": true,
-                "trigger": "item",
-                "triggerOn": "mousemove|click",
-                "axisPointer": {
-                    "type": "line"
-                },
-                "showContent": true,
-                "alwaysShowContent": false,
-                "showDelay": 0,
-                "hideDelay": 100,
-                "enterable": false,
-                "confine": false,
-                "appendToBody": false,
-                "transitionDuration": 0.4,
-                "formatter": "4. \u5438\u6536\u5c42(\u91cf\u5b50\u9631) - a-SiGe:H (\u6c22\u5316\u975e\u6676\u7845\u9517)<br/>Thickness: 5 nm<br/>Bandgap: 1.4 eV",
-                "textStyle": {
-                    "fontSize": 14
-                },
-                "borderWidth": 0,
-                "padding": 5,
-                "order": "seriesAsc"
-            },
             "itemStyle": {
-                "borderColor": "white",
-                "borderWidth": 1,
-                "opacity": 0.9
-            }
-        },
-        {
-            "type": "bar",
-            "name": "5. \u5438\u6536\u5c42(\u91cf\u5b50\u5792) - a-Si:H (\u6c22\u5316\u975e\u6676\u7845)",
-            "legendHoverLink": true,
-            "data": [
-                10
-            ],
-            "realtimeSort": false,
-            "showBackground": false,
-            "stack": "stack1",
-            "stackStrategy": "samesign",
-            "cursor": "pointer",
-            "barMinHeight": 0,
-            "barCategoryGap": "20%",
-            "barGap": "30%",
-            "large": false,
-            "largeThreshold": 400,
-            "seriesLayoutBy": "column",
-            "datasetIndex": 0,
-            "clip": true,
-            "zlevel": 0,
-            "z": 2,
-            "label": {
-                "show": true,
-                "position": "inside",
-                "margin": 8,
-                "fontSize": 11,
-                "formatter": "{c} nm",
-                "valueAnimation": false
-            },
-            "tooltip": {
-                "show": true,
-                "trigger": "item",
-                "triggerOn": "mousemove|click",
-                "axisPointer": {
-                    "type": "line"
-                },
-                "showContent": true,
-                "alwaysShowContent": false,
-                "showDelay": 0,
-                "hideDelay": 100,
-                "enterable": false,
-                "confine": false,
-                "appendToBody": false,
-                "transitionDuration": 0.4,
-                "formatter": "5. \u5438\u6536\u5c42(\u91cf\u5b50\u5792) - a-Si:H (\u6c22\u5316\u975e\u6676\u7845)<br/>Thickness: 10 nm<br/>Bandgap: 1.75 eV",
-                "textStyle": {
-                    "fontSize": 14
-                },
-                "borderWidth": 0,
-                "padding": 5,
-                "order": "seriesAsc"
-            },
-            "itemStyle": {
-                "borderColor": "white",
-                "borderWidth": 1,
-                "opacity": 0.9
-            }
-        },
-        {
-            "type": "bar",
-            "name": "6. \u5438\u6536\u5c42(\u91cf\u5b50\u9631) - a-SiGe:H (\u6c22\u5316\u975e\u6676\u7845\u9517)",
-            "legendHoverLink": true,
-            "data": [
-                5
-            ],
-            "realtimeSort": false,
-            "showBackground": false,
-            "stack": "stack1",
-            "stackStrategy": "samesign",
-            "cursor": "pointer",
-            "barMinHeight": 0,
-            "barCategoryGap": "20%",
-            "barGap": "30%",
-            "large": false,
-            "largeThreshold": 400,
-            "seriesLayoutBy": "column",
-            "datasetIndex": 0,
-            "clip": true,
-            "zlevel": 0,
-            "z": 2,
-            "label": {
-                "show": true,
-                "position": "inside",
-                "margin": 8,
-                "fontSize": 11,
-                "formatter": "{c} nm",
-                "valueAnimation": false
-            },
-            "tooltip": {
-                "show": true,
-                "trigger": "item",
-                "triggerOn": "mousemove|click",
-                "axisPointer": {
-                    "type": "line"
-                },
-                "showContent": true,
-                "alwaysShowContent": false,
-                "showDelay": 0,
-                "hideDelay": 100,
-                "enterable": false,
-                "confine": false,
-                "appendToBody": false,
-                "transitionDuration": 0.4,
-                "formatter": "6. \u5438\u6536\u5c42(\u91cf\u5b50\u9631) - a-SiGe:H (\u6c22\u5316\u975e\u6676\u7845\u9517)<br/>Thickness: 5 nm<br/>Bandgap: 1.55 eV",
-                "textStyle": {
-                    "fontSize": 14
-                },
-                "borderWidth": 0,
-                "padding": 5,
-                "order": "seriesAsc"
-            },
-            "itemStyle": {
-                "borderColor": "white",
-                "borderWidth": 1,
-                "opacity": 0.9
-            }
-        },
-        {
-            "type": "bar",
-            "name": "7. \u5438\u6536\u5c42(\u91cf\u5b50\u5792) - a-Si:H (\u6c22\u5316\u975e\u6676\u7845)",
-            "legendHoverLink": true,
-            "data": [
-                10
-            ],
-            "realtimeSort": false,
-            "showBackground": false,
-            "stack": "stack1",
-            "stackStrategy": "samesign",
-            "cursor": "pointer",
-            "barMinHeight": 0,
-            "barCategoryGap": "20%",
-            "barGap": "30%",
-            "large": false,
-            "largeThreshold": 400,
-            "seriesLayoutBy": "column",
-            "datasetIndex": 0,
-            "clip": true,
-            "zlevel": 0,
-            "z": 2,
-            "label": {
-                "show": true,
-                "position": "inside",
-                "margin": 8,
-                "fontSize": 11,
-                "formatter": "{c} nm",
-                "valueAnimation": false
-            },
-            "tooltip": {
-                "show": true,
-                "trigger": "item",
-                "triggerOn": "mousemove|click",
-                "axisPointer": {
-                    "type": "line"
-                },
-                "showContent": true,
-                "alwaysShowContent": false,
-                "showDelay": 0,
-                "hideDelay": 100,
-                "enterable": false,
-                "confine": false,
-                "appendToBody": false,
-                "transitionDuration": 0.4,
-                "formatter": "7. \u5438\u6536\u5c42(\u91cf\u5b50\u5792) - a-Si:H (\u6c22\u5316\u975e\u6676\u7845)<br/>Thickness: 10 nm<br/>Bandgap: 1.75 eV",
-                "textStyle": {
-                    "fontSize": 14
-                },
-                "borderWidth": 0,
-                "padding": 5,
-                "order": "seriesAsc"
-            },
-            "itemStyle": {
-                "borderColor": "white",
-                "borderWidth": 1,
-                "opacity": 0.9
-            }
-        },
-        {
-            "type": "bar",
-            "name": "8. \u5438\u6536\u5c42(\u4f53\u5438\u6536\u5c42) - \u00b5c-Si:H (\u6c22\u5316\u5fae\u6676\u7845)",
-            "legendHoverLink": true,
-            "data": [
-                300
-            ],
-            "realtimeSort": false,
-            "showBackground": false,
-            "stack": "stack1",
-            "stackStrategy": "samesign",
-            "cursor": "pointer",
-            "barMinHeight": 0,
-            "barCategoryGap": "20%",
-            "barGap": "30%",
-            "large": false,
-            "largeThreshold": 400,
-            "seriesLayoutBy": "column",
-            "datasetIndex": 0,
-            "clip": true,
-            "zlevel": 0,
-            "z": 2,
-            "label": {
-                "show": true,
-                "position": "inside",
-                "margin": 8,
-                "fontSize": 11,
-                "formatter": "{c} nm",
-                "valueAnimation": false
-            },
-            "tooltip": {
-                "show": true,
-                "trigger": "item",
-                "triggerOn": "mousemove|click",
-                "axisPointer": {
-                    "type": "line"
-                },
-                "showContent": true,
-                "alwaysShowContent": false,
-                "showDelay": 0,
-                "hideDelay": 100,
-                "enterable": false,
-                "confine": false,
-                "appendToBody": false,
-                "transitionDuration": 0.4,
-                "formatter": "8. \u5438\u6536\u5c42(\u4f53\u5438\u6536\u5c42) - \u00b5c-Si:H (\u6c22\u5316\u5fae\u6676\u7845)<br/>Thickness: 300 nm<br/>Bandgap: 1.1 eV",
-                "textStyle": {
-                    "fontSize": 14
-                },
-                "borderWidth": 0,
-                "padding": 5,
-                "order": "seriesAsc"
-            },
-            "itemStyle": {
-                "borderColor": "white",
-                "borderWidth": 1,
-                "opacity": 0.9
-            }
-        },
-        {
-            "type": "bar",
-            "name": "9. \u7a7a\u7a74\u4f20\u8f93\u5c42(HTL) - p\u207a \u00b5c-Si:H (\u91cd\u63ba\u6742p\u578b\u6c22\u5316\u5fae\u6676\u7845)",
-            "legendHoverLink": true,
-            "data": [
-                20
-            ],
-            "realtimeSort": false,
-            "showBackground": false,
-            "stack": "stack1",
-            "stackStrategy": "samesign",
-            "cursor": "pointer",
-            "barMinHeight": 0,
-            "barCategoryGap": "20%",
-            "barGap": "30%",
-            "large": false,
-            "largeThreshold": 400,
-            "seriesLayoutBy": "column",
-            "datasetIndex": 0,
-            "clip": true,
-            "zlevel": 0,
-            "z": 2,
-            "label": {
-                "show": true,
-                "position": "inside",
-                "margin": 8,
-                "fontSize": 11,
-                "formatter": "{c} nm",
-                "valueAnimation": false
-            },
-            "tooltip": {
-                "show": true,
-                "trigger": "item",
-                "triggerOn": "mousemove|click",
-                "axisPointer": {
-                    "type": "line"
-                },
-                "showContent": true,
-                "alwaysShowContent": false,
-                "showDelay": 0,
-                "hideDelay": 100,
-                "enterable": false,
-                "confine": false,
-                "appendToBody": false,
-                "transitionDuration": 0.4,
-                "formatter": "9. \u7a7a\u7a74\u4f20\u8f93\u5c42(HTL) - p\u207a \u00b5c-Si:H (\u91cd\u63ba\u6742p\u578b\u6c22\u5316\u5fae\u6676\u7845)<br/>Thickness: 20 nm<br/>Bandgap: 1.1 eV",
-                "textStyle": {
-                    "fontSize": 14
-                },
-                "borderWidth": 0,
-                "padding": 5,
-                "order": "seriesAsc"
-            },
-            "itemStyle": {
-                "borderColor": "white",
-                "borderWidth": 1,
-                "opacity": 0.9
-            }
-        },
-        {
-            "type": "bar",
-            "name": "10. \u5e95\u7535\u6781 - Al (\u94dd)",
-            "legendHoverLink": true,
-            "data": [
-                200
-            ],
-            "realtimeSort": false,
-            "showBackground": false,
-            "stack": "stack1",
-            "stackStrategy": "samesign",
-            "cursor": "pointer",
-            "barMinHeight": 0,
-            "barCategoryGap": "20%",
-            "barGap": "30%",
-            "large": false,
-            "largeThreshold": 400,
-            "seriesLayoutBy": "column",
-            "datasetIndex": 0,
-            "clip": true,
-            "zlevel": 0,
-            "z": 2,
-            "label": {
-                "show": true,
-                "position": "inside",
-                "margin": 8,
-                "fontSize": 11,
-                "formatter": "{c} nm",
-                "valueAnimation": false
-            },
-            "tooltip": {
-                "show": true,
-                "trigger": "item",
-                "triggerOn": "mousemove|click",
-                "axisPointer": {
-                    "type": "line"
-                },
-                "showContent": true,
-                "alwaysShowContent": false,
-                "showDelay": 0,
-                "hideDelay": 100,
-                "enterable": false,
-                "confine": false,
-                "appendToBody": false,
-                "transitionDuration": 0.4,
-                "formatter": "10. \u5e95\u7535\u6781 - Al (\u94dd)<br/>Thickness: 200 nm<br/>Bandgap: \u91d1\u5c5e eV",
-                "textStyle": {
-                    "fontSize": 14
-                },
-                "borderWidth": 0,
-                "padding": 5,
-                "order": "seriesAsc"
-            },
-            "itemStyle": {
-                "borderColor": "white",
-                "borderWidth": 1,
-                "opacity": 0.9
-            }
-        },
-        {
-            "type": "bar",
-            "name": "11. \u886c\u5e95 - \u73bb\u7483",
-            "legendHoverLink": true,
-            "data": [
-                1000000
-            ],
-            "realtimeSort": false,
-            "showBackground": false,
-            "stack": "stack1",
-            "stackStrategy": "samesign",
-            "cursor": "pointer",
-            "barMinHeight": 0,
-            "barCategoryGap": "20%",
-            "barGap": "30%",
-            "large": false,
-            "largeThreshold": 400,
-            "seriesLayoutBy": "column",
-            "datasetIndex": 0,
-            "clip": true,
-            "zlevel": 0,
-            "z": 2,
-            "label": {
-                "show": true,
-                "position": "inside",
-                "margin": 8,
-                "fontSize": 11,
-                "formatter": "{c} nm",
-                "valueAnimation": false
-            },
-            "tooltip": {
-                "show": true,
-                "trigger": "item",
-                "triggerOn": "mousemove|click",
-                "axisPointer": {
-                    "type": "line"
-                },
-                "showContent": true,
-                "alwaysShowContent": false,
-                "showDelay": 0,
-                "hideDelay": 100,
-                "enterable": false,
-                "confine": false,
-                "appendToBody": false,
-                "transitionDuration": 0.4,
-                "formatter": "11. \u886c\u5e95 - \u73bb\u7483<br/>Thickness: 1000000 nm<br/>Bandgap: \u7edd\u7f18\u4f53 eV",
-                "textStyle": {
-                    "fontSize": 14
-                },
-                "borderWidth": 0,
-                "padding": 5,
-                "order": "seriesAsc"
-            },
-            "itemStyle": {
-                "borderColor": "white",
-                "borderWidth": 1,
-                "opacity": 0.9
+                "color": "#73c0de",
+                "borderColor": "#fff",
+                "borderWidth": 2
             }
         }
     ],
     "legend": [
         {
             "data": [
-                "1. \u9876\u7535\u6781 - ITO (\u6c27\u5316\u94df\u9521)",
-                "2. \u7535\u5b50\u4f20\u8f93\u5c42(ETL) - TiO\u2082 (\u4e8c\u6c27\u5316\u949b)",
-                "3. \u5438\u6536\u5c42(\u91cf\u5b50\u5792) - a-Si:H (\u6c22\u5316\u975e\u6676\u7845)",
-                "4. \u5438\u6536\u5c42(\u91cf\u5b50\u9631) - a-SiGe:H (\u6c22\u5316\u975e\u6676\u7845\u9517)",
-                "5. \u5438\u6536\u5c42(\u91cf\u5b50\u5792) - a-Si:H (\u6c22\u5316\u975e\u6676\u7845)",
-                "6. \u5438\u6536\u5c42(\u91cf\u5b50\u9631) - a-SiGe:H (\u6c22\u5316\u975e\u6676\u7845\u9517)",
-                "7. \u5438\u6536\u5c42(\u91cf\u5b50\u5792) - a-Si:H (\u6c22\u5316\u975e\u6676\u7845)",
-                "8. \u5438\u6536\u5c42(\u4f53\u5438\u6536\u5c42) - \u00b5c-Si:H (\u6c22\u5316\u5fae\u6676\u7845)",
-                "9. \u7a7a\u7a74\u4f20\u8f93\u5c42(HTL) - p\u207a \u00b5c-Si:H (\u91cd\u63ba\u6742p\u578b\u6c22\u5316\u5fae\u6676\u7845)",
-                "10. \u5e95\u7535\u6781 - Al (\u94dd)",
-                "11. \u886c\u5e95 - \u73bb\u7483"
+                "\u9876\u7535\u6781 (80nm)",
+                "\u7535\u5b50\u4f20\u8f93\u5c42 (ETL) (30nm)",
+                "\u5149\u5438\u6536\u5c42 (150nm)",
+                "\u7a7a\u7a74\u4f20\u8f93\u5c42 (HTL) (10nm)",
+                "\u5e95\u7535\u6781 (150nm)"
             ],
             "selected": {},
-            "type": "scroll",
             "show": true,
-            "bottom": "0%",
-            "orient": "horizontal",
+            "right": "2%",
+            "top": "10%",
+            "orient": "vertical",
             "padding": 5,
             "itemGap": 10,
             "itemWidth": 25,
             "itemHeight": 14,
+            "textStyle": {
+                "fontSize": 12
+            },
             "backgroundColor": "transparent",
             "borderColor": "#ccc",
             "borderRadius": 0,
@@ -717,10 +256,10 @@
     ],
     "tooltip": {
         "show": true,
-        "trigger": "item",
+        "trigger": "axis",
         "triggerOn": "mousemove|click",
         "axisPointer": {
-            "type": "line"
+            "type": "shadow"
         },
         "showContent": true,
         "alwaysShowContent": false,
@@ -730,6 +269,7 @@
         "confine": false,
         "appendToBody": false,
         "transitionDuration": 0.4,
+        "formatter": "{b}<br/>{a}: {c} nm",
         "textStyle": {
             "fontSize": 14
         },
@@ -739,43 +279,16 @@
     },
     "xAxis": [
         {
-            "type": "value",
-            "name": "Thickness (nm)",
             "show": true,
             "scale": false,
             "nameLocation": "end",
             "nameGap": 15,
-            "inverse": false,
-            "position": "top",
-            "offset": 0,
-            "splitNumber": 5,
-            "minInterval": 0,
-            "splitLine": {
+            "axisLabel": {
                 "show": true,
-                "lineStyle": {
-                    "show": true,
-                    "width": 1,
-                    "opacity": 1,
-                    "curveness": 0,
-                    "type": "solid"
-                }
+                "margin": 8,
+                "fontSize": 12,
+                "valueAnimation": false
             },
-            "animation": true,
-            "animationThreshold": 2000,
-            "animationDuration": 1000,
-            "animationEasing": "cubicOut",
-            "animationDelay": 0,
-            "animationDurationUpdate": 300,
-            "animationEasingUpdate": "cubicOut",
-            "animationDelayUpdate": 0
-        }
-    ],
-    "yAxis": [
-        {
-            "show": false,
-            "scale": false,
-            "nameLocation": "end",
-            "nameGap": 15,
             "inverse": false,
             "offset": 0,
             "splitNumber": 5,
@@ -799,8 +312,49 @@
             "animationEasingUpdate": "cubicOut",
             "animationDelayUpdate": 0,
             "data": [
-                "Structure"
+                "Layer Stack"
             ]
+        }
+    ],
+    "yAxis": [
+        {
+            "name": "Thickness (nm)",
+            "show": true,
+            "scale": false,
+            "nameLocation": "end",
+            "nameGap": 15,
+            "nameTextStyle": {
+                "fontWeight": "bold",
+                "fontSize": 14
+            },
+            "axisLabel": {
+                "show": true,
+                "margin": 8,
+                "fontSize": 12,
+                "valueAnimation": false
+            },
+            "inverse": false,
+            "offset": 0,
+            "splitNumber": 5,
+            "minInterval": 0,
+            "splitLine": {
+                "show": true,
+                "lineStyle": {
+                    "show": true,
+                    "width": 1,
+                    "opacity": 1,
+                    "curveness": 0,
+                    "type": "solid"
+                }
+            },
+            "animation": true,
+            "animationThreshold": 2000,
+            "animationDuration": 1000,
+            "animationEasing": "cubicOut",
+            "animationDelay": 0,
+            "animationDurationUpdate": 300,
+            "animationEasingUpdate": "cubicOut",
+            "animationDelayUpdate": 0
         }
     ],
     "title": [
@@ -808,30 +362,27 @@
             "show": true,
             "text": "Detector Layer Structure",
             "target": "blank",
+            "subtext": "Total Thickness: 420 nm | 5 Layers",
             "subtarget": "blank",
-            "left": "center",
-            "top": "2%",
             "padding": 5,
             "itemGap": 10,
             "textAlign": "auto",
             "textVerticalAlign": "auto",
-            "triggerEvent": false
+            "triggerEvent": false,
+            "textStyle": {
+                "fontWeight": "bold",
+                "fontSize": 20
+            },
+            "subtextStyle": {
+                "color": "#666",
+                "fontSize": 14
+            }
         }
-    ],
-    "toolbox": {
-        "show": true,
-        "orient": "horizontal",
-        "itemSize": 15,
-        "itemGap": 10,
-        "left": "80%",
-        "feature": {
-            "saveAsImage": {}
-        }
-    }
+    ]
 };
-        chart_1ffcb70c97144f369e05d198350bdfdd.setOption(option_1ffcb70c97144f369e05d198350bdfdd);
+        chart_e9d22319c49f42ab96d0b05a90e84c2d.setOption(option_e9d22319c49f42ab96d0b05a90e84c2d);
             window.addEventListener('resize', function(){
-                chart_1ffcb70c97144f369e05d198350bdfdd.resize();
+                chart_e9d22319c49f42ab96d0b05a90e84c2d.resize();
             })
     </script>
 </body>
