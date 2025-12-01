@@ -29,10 +29,37 @@ text_splitter = RecursiveCharacterTextSplitter(
 )
 chunks = text_splitter.split_documents(docs)
 print(f"已被划分成{len(chunks)}个可嵌入区块")
-text = [doc.page_content for doc in chunks]
+
 embeddings = DashScopeEmbeddings(
     model = "text-embedding-v4",
     dashscope_api_key =  "sk-69122c7a6960491685c6edc87c028dfa",
 )
-db = FAISS.from_documents(chunks,embeddings)
-db.save_local("vector_db")
+
+# 分批处理以避免 API 限制和兼容性问题
+batch_size = 25  # 每批处理 25 个文档
+print(f"开始分批生成向量数据库，每批 {batch_size} 个区块...")
+
+db = None
+for i in range(0, len(chunks), batch_size):
+    batch = chunks[i:i+batch_size]
+    print(f"处理第 {i//batch_size + 1} 批 ({i+1}-{min(i+batch_size, len(chunks))}/{len(chunks)})...")
+    
+    try:
+        if db is None:
+            # 第一批：创建数据库
+            db = FAISS.from_documents(batch, embeddings)
+        else:
+            # 后续批次：添加到现有数据库
+            batch_db = FAISS.from_documents(batch, embeddings)
+            db.merge_from(batch_db)
+        print(f"  ✓ 第 {i//batch_size + 1} 批处理成功")
+    except Exception as e:
+        print(f"  ✗ 第 {i//batch_size + 1} 批处理失败: {e}")
+        print(f"  跳过此批次，继续处理...")
+        continue
+
+if db is not None:
+    db.save_local("vector_db")
+    print("向量数据库已保存到 vector_db/")
+else:
+    print("错误：未能创建向量数据库")

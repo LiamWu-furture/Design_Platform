@@ -108,10 +108,14 @@ def api_design():
 请务必包含完整的层叠结构，必须明确包含以下功能层：
 1. 顶电极 (Top Electrode)
 2. 电子传输层 (Electron Transport Layer, ETL)
-3. 光吸收层 (Absorber Layer) - **特别要求**：光吸收层严禁使用单一均质材料。请将其设计为复合结构（如量子阱结构、超晶格结构、异质结或梯度带隙结构），并在返回的layers列表中将其拆分为具体的子层（例如："吸收层(量子阱)"、"吸收层(量子垒)"等）。
+3. 光吸收层 (Absorber Layer) - **特别要求**：光吸收层严禁使用单一均质材料。
 4. 空穴传输层 (Hole Transport Layer, HTL)
 5. 底电极 (Bottom Electrode)
 以及其他必要的缓冲层或接触层。
+
+**重要提示**：
+- 请只返回实际的功能薄膜层（电极、传输层、吸收层等）。
+- **严禁**在 `layers` 列表中包含衬底（Substrate），如玻璃（Glass）、硅片（Silicon Wafer）、蓝宝石等。衬底应默认为支撑结构，不参与层叠结构的定义。
 
 请以JSON格式返回设计结果，包含以下字段：
 {{
@@ -128,7 +132,9 @@ def api_design():
     }},
     "optimization_suggestions": ["建议1", "建议2", ...],
     "explanation": "设计说明"
-}}"""
+}}
+
+**重要提示**：在 "explanation" 和 "optimization_suggestions" 字段中，请直接给出专业的技术说明和建议，不要包含任何参考文献引用标记（如"【参考文献片段 1】"、"[1]"等）。所有内容应以自然流畅的技术语言表达。"""
             
             # 确定模型
             model_type = "deepseek-reasoner" if deep_thinking == 'yes' else "deepseek-chat"
@@ -250,7 +256,7 @@ def design():
 3. 光吸收层 (Absorber Layer) - **特别要求**：光吸收层严禁使用单一均质材料。请将其设计为复合结构（如量子阱结构、超晶格结构、异质结或梯度带隙结构），并在返回的layers列表中将其拆分为具体的子层（例如："吸收层(量子阱)"、"吸收层(量子垒)"等）。
 4. 空穴传输层 (Hole Transport Layer, HTL)
 5. 底电极 (Bottom Electrode)
-以及其他必要的缓冲层或接触层。
+
 
 请以JSON格式返回设计结果，包含以下字段：
 {{
@@ -267,7 +273,9 @@ def design():
     }},
     "optimization_suggestions": ["建议1", "建议2", ...],
     "explanation": "设计说明"
-}}"""
+}}
+
+**重要提示**：在 "explanation" 和 "optimization_suggestions" 字段中，请直接给出专业的技术说明和建议，不要包含任何参考文献引用标记（如"【参考文献片段 1】"、"[1]"等）。所有内容应以自然流畅的技术语言表达。"""
         
         # 调用DeepSeek API
         api_response = call_deepseek_api(prompt)

@@ -10,11 +10,74 @@ import json
 import time
 from utils import extract_json_from_text
 
+# 导入 RAG 服务
+try:
+    from rag_service import _retriever, initialize_rag
+    RAG_AVAILABLE = True
+    # 确保 RAG 系统已初始化
+    initialize_rag()
+except Exception as e:
+    print(f"RAG 系统不可用: {e}")
+    RAG_AVAILABLE = False
+    _retriever = None
+
 # 初始化OpenAI客户端，使用DeepSeek的base_url
 if DEEPSEEK_API_KEY:
     client = OpenAI(api_key=DEEPSEEK_API_KEY, base_url="https://api.deepseek.com")
 else:
     client = None
+
+def get_academic_references(user_prompt):
+    """
+    从知识库检索与设计需求相关的学术文献
+    
+    Args:
+        user_prompt: 用户的设计需求
+        
+    Returns:
+        str: 相关学术文献内容，如果 RAG 不可用则返回空字符串
+    """
+    if not RAG_AVAILABLE or _retriever is None:
+        return ""
+    
+    try:
+        # 构建检索查询，提取关键信息
+        search_queries = [
+            f"光电探测器设计 {user_prompt}",
+            "叠层光电探测器结构",
+            "量子效率优化方法"
+        ]
+        
+        all_docs = []
+        for query in search_queries:
+            docs = _retriever.invoke(query)
+            all_docs.extend(docs)
+        
+        # 去重并限制文档数量
+        unique_docs = []
+        seen_content = set()
+        for doc in all_docs:
+            content_hash = hash(doc.page_content[:100])  # 使用前100字符作为去重依据
+            if content_hash not in seen_content:
+                seen_content.add(content_hash)
+                unique_docs.append(doc)
+                if len(unique_docs) >= 5:  # 最多5个文档片段
+                    break
+        
+        if not unique_docs:
+            return ""
+        
+        # 格式化文献内容
+        references = "\n\n".join([
+            f"【参考文献片段 {i+1}】\n{doc.page_content}"
+            for i, doc in enumerate(unique_docs)
+        ])
+        
+        return references
+        
+    except Exception as e:
+        print(f"检索学术文献失败: {e}")
+        return ""
 
 SYSTEM_PROMPT = """你是一位专业的光电探测器设计专家，精通半导体物理、材料科学和光电器件工程。
 你的任务是根据用户提供的参数，设计一个高性能的叠层光电探测器。
@@ -29,13 +92,33 @@ SYSTEM_PROMPT = """你是一位专业的光电探测器设计专家，精通半�
 请严格按照JSON格式输出设计结果，包含layers（层结构）、performance（性能参数）、optimization_suggestions（优化建议）和explanation（设计说明）。
 """
 
-def call_deepseek_api(user_prompt, model="deepseek-reasoner"):
+SYSTEM_PROMPT_WITH_RAG = """你是一位专业的光电探测器设计专家，精通半导体物理、材料科学和光电器件工程。
+你的任务是根据用户提供的参数和学术文献资料，设计一个高性能的叠层光电探测器。
+
+**重要要求**：
+1. 你必须参考提供的【学术文献】中的设计思路、材料选择和性能参数
+2. 设计方案应基于文献中的实验数据和理论分析
+3. 在 explanation 字段中明确说明你参考了哪些文献内容，以及如何应用这些知识
+4. 优化建议应结合文献中的最新研究成果
+
+设计时需要考虑：
+1. 材料的禁带宽度与目标波长的匹配（参考文献中的材料特性）
+2. 各层厚度对光吸收和载流子收集的影响（参考文献中的优化参数）
+3. 异质结界面的能带匹配（参考文献中的界面工程）
+4. 暗电流的抑制（参考文献中的抑制策略）
+5. 量子效率的优化（参考文献中的效率提升方法）
+
+请严格按照JSON格式输出设计结果，包含layers（层结构）、performance（性能参数）、optimization_suggestions（优化建议）和explanation（设计说明，必须引用文献）。
+"""
+
+def call_deepseek_api(user_prompt, model="deepseek-reasoner", use_rag=True):
     """
     调用DeepSeek API进行探测器设计（非流式）
     
     Args:
         user_prompt: 用户提示词
         model: 模型名称，默认为 "deepseek-reasoner" (R1)，可选 "deepseek-chat" (V3)
+        use_rag: 是否使用 RAG 增强，默认为 True
     """
     if not client:
         return {
@@ -44,9 +127,29 @@ def call_deepseek_api(user_prompt, model="deepseek-reasoner"):
         }
     
     try:
+        # 检索学术文献
+        academic_refs = ""
+        if use_rag and RAG_AVAILABLE:
+            academic_refs = get_academic_references(user_prompt)
+        
+        # 根据是否有文献选择不同的系统提示词
+        if academic_refs:
+            system_prompt = SYSTEM_PROMPT_WITH_RAG
+            # 将文献添加到用户提示词中
+            enhanced_prompt = f"""【学术文献】
+{academic_refs}
+
+【设计需求】
+{user_prompt}
+
+请基于以上学术文献和设计需求，给出专业的探测器设计方案。"""
+        else:
+            system_prompt = SYSTEM_PROMPT
+            enhanced_prompt = user_prompt
+        
         messages = [
-            {'role': 'system', 'content': SYSTEM_PROMPT},
-            {'role': 'user', 'content': user_prompt}
+            {'role': 'system', 'content': system_prompt},
+            {'role': 'user', 'content': enhanced_prompt}
         ]
         
         response = client.chat.completions.create(
@@ -59,7 +162,8 @@ def call_deepseek_api(user_prompt, model="deepseek-reasoner"):
         
         return {
             'status': 'success',
-            'content': content
+            'content': content,
+            'used_rag': bool(academic_refs)
         }
         
     except Exception as e:
@@ -68,9 +172,14 @@ def call_deepseek_api(user_prompt, model="deepseek-reasoner"):
             'message': f'API调用失败: {str(e)}'
         }
 
-def generate_design_stream(prompt, model_type='deepseek-reasoner'):
+def generate_design_stream(prompt, model_type='deepseek-reasoner', use_rag=True):
     """
     生成器函数，用于流式调用DeepSeek API并返回特定格式的进度数据
+    
+    Args:
+        prompt: 用户提示词
+        model_type: 模型类型
+        use_rag: 是否使用 RAG 增强，默认为 True
     """
     if not client:
         yield json.dumps({
@@ -83,6 +192,20 @@ def generate_design_stream(prompt, model_type='deepseek-reasoner'):
     # 确定模型显示名称
     model_display = "AI推理模型" if model_type == 'deepseek-reasoner' else "AI大模型"
 
+    # RAG 检索阶段
+    academic_refs = ""
+    if use_rag and RAG_AVAILABLE:
+        yield json.dumps({'step': 3, 'message': '📚 检索学术文献...', 'progress': 25, 'log': True}) + '\n'
+        time.sleep(0.2)
+        
+        academic_refs = get_academic_references(prompt)
+        
+        if academic_refs:
+            yield json.dumps({'step': 3, 'message': '✅ 已检索到相关学术文献，将用于增强设计', 'progress': 28, 'log': True}) + '\n'
+        else:
+            yield json.dumps({'step': 3, 'message': '⚠️ 未找到相关文献，使用标准设计模式', 'progress': 28, 'log': True}) + '\n'
+        time.sleep(0.2)
+
     yield json.dumps({'step': 3, 'message': f'调用{model_display} API', 'progress': 30}) + '\n'
     time.sleep(0.3)
     
@@ -91,9 +214,23 @@ def generate_design_stream(prompt, model_type='deepseek-reasoner'):
     yield json.dumps({'step': 3, 'message': f'✅ 连接成功，{model_display}开始推理...', 'progress': 40, 'log': True}) + '\n'
 
     try:
+        # 根据是否有文献选择不同的系统提示词和用户提示词
+        if academic_refs:
+            system_prompt = SYSTEM_PROMPT_WITH_RAG
+            enhanced_prompt = f"""【学术文献】
+{academic_refs}
+
+【设计需求】
+{prompt}
+
+请基于以上学术文献和设计需求，给出专业的探测器设计方案。在设计说明中请明确引用文献内容。"""
+        else:
+            system_prompt = SYSTEM_PROMPT
+            enhanced_prompt = prompt
+        
         messages = [
-            {'role': 'system', 'content': SYSTEM_PROMPT},
-            {'role': 'user', 'content': prompt}
+            {'role': 'system', 'content': system_prompt},
+            {'role': 'user', 'content': enhanced_prompt}
         ]
         
         response = client.chat.completions.create(
