@@ -50,6 +50,7 @@ def generate_structure_plot(layers, prefix=""):
     layer_names = [layer.get('name', layer['material']) for layer in layers]
     materials = [layer['material'] for layer in layers]
     thicknesses = [layer['thickness'] for layer in layers]
+    total_thickness = sum(thicknesses)
     
     # 定义渐变色系
     colors = [
@@ -68,16 +69,22 @@ def generate_structure_plot(layers, prefix=""):
         .add_xaxis(["Layer Stack"])
     )
     
-    # 添加每一层
+    # 添加每一层，智能显示标签
     for i, (name, material, thickness) in enumerate(zip(layer_names, materials, thicknesses)):
+        # 计算该层占总厚度的比例
+        thickness_ratio = thickness / total_thickness if total_thickness > 0 else 0
+        
+        # 如果层厚度占比小于8%，则不在内部显示标签（太窄会显得拥挤）
+        show_inside_label = thickness_ratio >= 0.08
+        
         bar.add_yaxis(
-            series_name=f"{name}",
+            series_name=f"{name} ({thickness}nm)",  # 图例中显示完整信息
             y_axis=[thickness],
             stack="stack1",
             label_opts=opts.LabelOpts(
-                is_show=True,
+                is_show=show_inside_label,  # 只有足够宽的层才显示内部标签
                 position="inside",
-                formatter="{b}: {c}nm",
+                formatter="{c}nm",  # 简化显示，只显示厚度
                 font_size=11,
                 font_weight="bold",
                 color="white"
