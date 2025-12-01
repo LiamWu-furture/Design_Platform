@@ -108,7 +108,7 @@ def api_design():
 请务必包含完整的层叠结构，必须明确包含以下功能层：
 1. 顶电极 (Top Electrode)
 2. 电子传输层 (Electron Transport Layer, ETL)
-3. 光吸收层 (Absorber Layer) - **特别要求**：光吸收层严禁使用单一均质材料。
+3. 光吸收层 (Absorber Layer) - **特别要求**：光吸收层尽量少使用单一均质材料,或者使用层数少于2层的复合结构。
 4. 空穴传输层 (Hole Transport Layer, HTL)
 5. 底电极 (Bottom Electrode)
 以及其他必要的缓冲层或接触层。
