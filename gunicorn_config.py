@@ -31,3 +31,11 @@ errorlog = '-'
 
 # 预加载应用代码，加快启动速度
 preload_app = True
+
+# 禁用请求缓冲，支持流式响应
+limit_request_line = 0
+limit_request_fields = 100
+limit_request_field_size = 8190
+
+# 响应超时（秒）- 用于流式响应
+graceful_timeout = 30

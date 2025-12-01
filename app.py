@@ -209,7 +209,10 @@ def api_design():
                 # 普通进度/日志消息直接透传
                 yield chunk_str
 
-        return app.response_class(generate_progress(), mimetype='application/json')
+        response = app.response_class(generate_progress(), mimetype='application/json')
+        response.headers['Cache-Control'] = 'no-cache'
+        response.headers['X-Accel-Buffering'] = 'no'
+        return response
         
     except Exception as e:
         return jsonify({
