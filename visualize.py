@@ -47,29 +47,75 @@ def generate_structure_plot(layers, prefix=""):
         str: 图像相对路径
     """
     # 提取数据
-    materials = [f"{layer['material']} ({layer['thickness']}nm)" for layer in layers]
+    layer_names = [layer.get('name', layer['material']) for layer in layers]
+    materials = [layer['material'] for layer in layers]
     thicknesses = [layer['thickness'] for layer in layers]
+    
+    # 定义渐变色系
+    colors = [
+        '#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de',
+        '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc', '#5470c6'
+    ]
     
     # 创建堆叠条形图
     bar = (
-        Bar(init_opts=opts.InitOpts(theme=ThemeType.MACARONS, width="1200px", height="600px"))
-        .add_xaxis(["Layer Structure"])
+        Bar(init_opts=opts.InitOpts(
+            theme=ThemeType.LIGHT,
+            width="100%",
+            height="600px",
+            bg_color="#ffffff"
+        ))
+        .add_xaxis(["Layer Stack"])
     )
     
     # 添加每一层
-    for i, (material, thickness) in enumerate(zip(materials, thicknesses)):
+    for i, (name, material, thickness) in enumerate(zip(layer_names, materials, thicknesses)):
         bar.add_yaxis(
-            material,
-            [thickness],
+            series_name=f"{name}",
+            y_axis=[thickness],
             stack="stack1",
-            label_opts=opts.LabelOpts(is_show=True, position="inside"),
+            label_opts=opts.LabelOpts(
+                is_show=True,
+                position="inside",
+                formatter="{b}: {c}nm",
+                font_size=11,
+                font_weight="bold",
+                color="white"
+            ),
+            itemstyle_opts=opts.ItemStyleOpts(
+                color=colors[i % len(colors)],
+                border_color="#fff",
+                border_width=2
+            ),
         )
     
     bar.set_global_opts(
-        title_opts=opts.TitleOpts(title="Detector Layer Structure", subtitle="Thickness (nm)"),
-        xaxis_opts=opts.AxisOpts(name=""),
-        yaxis_opts=opts.AxisOpts(name="Thickness (nm)"),
-        legend_opts=opts.LegendOpts(pos_right="5%", orient="vertical"),
+        title_opts=opts.TitleOpts(
+            title="Detector Layer Structure",
+            subtitle=f"Total Thickness: {sum(thicknesses)} nm | {len(layers)} Layers",
+            title_textstyle_opts=opts.TextStyleOpts(font_size=20, font_weight="bold"),
+            subtitle_textstyle_opts=opts.TextStyleOpts(font_size=14, color="#666")
+        ),
+        xaxis_opts=opts.AxisOpts(
+            name="",
+            axislabel_opts=opts.LabelOpts(font_size=12)
+        ),
+        yaxis_opts=opts.AxisOpts(
+            name="Thickness (nm)",
+            name_textstyle_opts=opts.TextStyleOpts(font_size=14, font_weight="bold"),
+            axislabel_opts=opts.LabelOpts(font_size=12)
+        ),
+        legend_opts=opts.LegendOpts(
+            pos_right="2%",
+            pos_top="10%",
+            orient="vertical",
+            textstyle_opts=opts.TextStyleOpts(font_size=12)
+        ),
+        tooltip_opts=opts.TooltipOpts(
+            trigger="axis",
+            axis_pointer_type="shadow",
+            formatter="{b}<br/>{a}: {c} nm"
+        ),
     )
     
     output_path = f'static/images/{prefix}structure.html'
@@ -99,28 +145,105 @@ def generate_performance_plot(performance, prefix=""):
         wavelengths = list(range(400, 1601, 50))
         responsivities = [0.1 + 0.5 * (1 - abs(w - 1000) / 600) for w in wavelengths]
     
+    # 获取性能参数
+    qe = performance.get('quantum_efficiency', 'N/A')
+    qe_type = performance.get('quantum_efficiency_type', '')
+    dark_current = performance.get('dark_current', 'N/A')
+    wavelength_range = performance.get('wavelength_range', [min(wavelengths), max(wavelengths)])
+    
+    # 构建副标题
+    subtitle_parts = []
+    if qe != 'N/A':
+        subtitle_parts.append(f"{qe_type} {qe}%" if qe_type else f"QE: {qe}%")
+    if dark_current != 'N/A':
+        subtitle_parts.append(f"Dark Current: {dark_current} A")
+    subtitle_parts.append(f"Range: {wavelength_range[0]}-{wavelength_range[1]} nm")
+    subtitle = " | ".join(subtitle_parts)
+    
     # 创建折线图
     line = (
-        Line(init_opts=opts.InitOpts(theme=ThemeType.MACARONS, width="1000px", height="600px"))
+        Line(init_opts=opts.InitOpts(
+            theme=ThemeType.LIGHT,
+            width="100%",
+            height="600px",
+            bg_color="#ffffff"
+        ))
         .add_xaxis([str(w) for w in wavelengths])
         .add_yaxis(
-            "Responsivity",
-            responsivities,
+            series_name="Responsivity",
+            y_axis=responsivities,
             is_smooth=True,
-            areastyle_opts=opts.AreaStyleOpts(opacity=0.3),
+            symbol="circle",
+            symbol_size=8,
+            linestyle_opts=opts.LineStyleOpts(width=3, color="#5470c6"),
+            areastyle_opts=opts.AreaStyleOpts(
+                opacity=0.2,
+                color="#5470c6"
+            ),
             label_opts=opts.LabelOpts(is_show=False),
             markpoint_opts=opts.MarkPointOpts(
-                data=[opts.MarkPointItem(type_="max", name="最大值")]
+                data=[
+                    opts.MarkPointItem(type_="max", name="Peak", symbol_size=60),
+                ],
+                label_opts=opts.LabelOpts(font_size=12, font_weight="bold")
             ),
+            markline_opts=opts.MarkLineOpts(
+                data=[opts.MarkLineItem(type_="average", name="Average")],
+                linestyle_opts=opts.LineStyleOpts(type_="dashed", color="#91cc75")
+            ),
+            itemstyle_opts=opts.ItemStyleOpts(
+                color="#5470c6",
+                border_color="#fff",
+                border_width=2
+            )
         )
         .set_global_opts(
             title_opts=opts.TitleOpts(
                 title="Detector Spectral Response",
-                subtitle=f"Quantum Efficiency: {performance.get('quantum_efficiency', 'N/A')}%" if 'quantum_efficiency' in performance else ""
+                subtitle=subtitle,
+                title_textstyle_opts=opts.TextStyleOpts(font_size=20, font_weight="bold"),
+                subtitle_textstyle_opts=opts.TextStyleOpts(font_size=13, color="#666")
             ),
-            xaxis_opts=opts.AxisOpts(name="Wavelength (nm)", type_="category"),
-            yaxis_opts=opts.AxisOpts(name="Responsivity (A/W)"),
-            tooltip_opts=opts.TooltipOpts(trigger="axis"),
+            xaxis_opts=opts.AxisOpts(
+                name="Wavelength (nm)",
+                name_location="middle",
+                name_gap=35,
+                name_textstyle_opts=opts.TextStyleOpts(font_size=14, font_weight="bold"),
+                type_="category",
+                axislabel_opts=opts.LabelOpts(font_size=11, rotate=45),
+                splitline_opts=opts.SplitLineOpts(is_show=True, linestyle_opts=opts.LineStyleOpts(opacity=0.2))
+            ),
+            yaxis_opts=opts.AxisOpts(
+                name="Responsivity (A/W)",
+                name_location="middle",
+                name_gap=50,
+                name_textstyle_opts=opts.TextStyleOpts(font_size=14, font_weight="bold"),
+                axislabel_opts=opts.LabelOpts(font_size=11),
+                splitline_opts=opts.SplitLineOpts(is_show=True, linestyle_opts=opts.LineStyleOpts(opacity=0.2))
+            ),
+            tooltip_opts=opts.TooltipOpts(
+                trigger="axis",
+                axis_pointer_type="cross",
+                formatter="Wavelength: {b} nm<br/>Responsivity: {c} A/W",
+                background_color="rgba(50,50,50,0.9)",
+                border_color="#333",
+                border_width=1,
+                textstyle_opts=opts.TextStyleOpts(color="#fff")
+            ),
+            legend_opts=opts.LegendOpts(
+                pos_top="5%",
+                pos_right="5%",
+                textstyle_opts=opts.TextStyleOpts(font_size=12)
+            ),
+            datazoom_opts=[
+                opts.DataZoomOpts(
+                    type_="slider",
+                    range_start=0,
+                    range_end=100,
+                    pos_bottom="5%"
+                ),
+                opts.DataZoomOpts(type_="inside")
+            ],
         )
     )
     
