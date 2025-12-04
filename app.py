@@ -117,24 +117,38 @@ def api_design():
 - 请只返回实际的功能薄膜层（电极、传输层、吸收层等）。
 - **严禁**在 `layers` 列表中包含衬底（Substrate），如玻璃（Glass）、硅片（Silicon Wafer）、蓝宝石等。衬底应默认为支撑结构，不参与层叠结构的定义。
 
-请以JSON格式返回设计结果，包含以下字段：
+请严格按照以下JSON格式返回设计结果（注意：thickness和bandgap必须是纯数字，不要带单位）：
 {{
     "layers": [
-        {{"name": "层名称(如:顶电极/ETL/吸收层/HTL/底电极)", "material": "材料名称", "thickness": 厚度值(nm), "bandgap": 禁带宽度(eV), "function": "详细功能描述", "fabrication_process": "详细制备工艺"}},
-        ...
+        {{
+            "name": "层名称",
+            "material": "材料名称",
+            "thickness": 100,
+            "bandgap": 1.5,
+            "function": "功能描述",
+            "fabrication_process": "制备工艺",
+            "alternative_materials": [
+                {{"material": "备选材料1", "bandgap": 1.4, "pros": "优点描述", "cons": "缺点描述"}},
+                {{"material": "备选材料2", "bandgap": 1.6, "pros": "优点描述", "cons": "缺点描述"}}
+            ]
+        }}
     ],
     "performance": {{
-        "wavelength_range": [最小波长(nm), 最大波长(nm)],
-        "responsivity_data": [[波长1, 响应度1], [波长2, 响应度2], ...],
-        "quantum_efficiency": 量子效率(%),
-        "quantum_efficiency_type": "IQE"或"EQE" (明确注明是内量子效率还是外量子效率),
-        "dark_current": 暗电流(A)
+        "wavelength_range": [400, 1000],
+        "responsivity_data": [[400, 0.5], [600, 0.8]],
+        "quantum_efficiency": 85,
+        "quantum_efficiency_type": "EQE",
+        "dark_current": 1e-9
     }},
-    "optimization_suggestions": ["建议1", "建议2", ...],
+    "optimization_suggestions": ["建议1", "建议2"],
     "explanation": "设计说明"
 }}
 
-**重要提示**：在 "explanation" 和 "optimization_suggestions" 字段中，请直接给出专业的技术说明和建议，不要包含任何参考文献引用标记（如"【参考文献片段 1】"、"[1]"等）。所有内容应以自然流畅的技术语言表达。"""
+**关键要求**：
+1. 所有数值字段(thickness, bandgap等)必须是数字，不要加单位或文字说明
+2. alternative_materials数组中每个对象必须包含: material(字符串), bandgap(数字), pros(字符串), cons(字符串)
+3. 每层提供2-3个备选材料
+4. 不要在说明中包含参考文献标记"""
             
             # 确定模型
             model_type = "deepseek-reasoner" if deep_thinking == 'yes' else "deepseek-chat"
@@ -261,24 +275,38 @@ def design():
 5. 底电极 (Bottom Electrode)
 
 
-请以JSON格式返回设计结果，包含以下字段：
+请严格按照以下JSON格式返回设计结果（注意：thickness和bandgap必须是纯数字，不要带单位）：
 {{
     "layers": [
-        {{"name": "层名称(如:顶电极/ETL/吸收层/HTL/底电极)", "material": "材料名称", "thickness": 厚度值(nm), "bandgap": 禁带宽度(eV), "function": "详细功能描述", "fabrication_process": "详细制备工艺"}},
-        ...
+        {{
+            "name": "层名称",
+            "material": "材料名称",
+            "thickness": 100,
+            "bandgap": 1.5,
+            "function": "功能描述",
+            "fabrication_process": "制备工艺",
+            "alternative_materials": [
+                {{"material": "备选材料1", "bandgap": 1.4, "pros": "优点描述", "cons": "缺点描述"}},
+                {{"material": "备选材料2", "bandgap": 1.6, "pros": "优点描述", "cons": "缺点描述"}}
+            ]
+        }}
     ],
     "performance": {{
-        "wavelength_range": [最小波长(nm), 最大波长(nm)],
-        "responsivity_data": [[波长1, 响应度1], [波长2, 响应度2], ...],
-        "quantum_efficiency": 量子效率(%),
-        "quantum_efficiency_type": "IQE"或"EQE" (明确注明是内量子效率还是外量子效率),
-        "dark_current": 暗电流(A)
+        "wavelength_range": [400, 1000],
+        "responsivity_data": [[400, 0.5], [600, 0.8]],
+        "quantum_efficiency": 85,
+        "quantum_efficiency_type": "EQE",
+        "dark_current": 1e-9
     }},
-    "optimization_suggestions": ["建议1", "建议2", ...],
+    "optimization_suggestions": ["建议1", "建议2"],
     "explanation": "设计说明"
 }}
 
-**重要提示**：在 "explanation" 和 "optimization_suggestions" 字段中，请直接给出专业的技术说明和建议，不要包含任何参考文献引用标记（如"【参考文献片段 1】"、"[1]"等）。所有内容应以自然流畅的技术语言表达。"""
+**关键要求**：
+1. 所有数值字段(thickness, bandgap等)必须是数字，不要加单位或文字说明
+2. alternative_materials数组中每个对象必须包含: material(字符串), bandgap(数字), pros(字符串), cons(字符串)
+3. 每层提供2-3个备选材料
+4. 不要在说明中包含参考文献标记"""
         
         # 调用DeepSeek API
         api_response = call_deepseek_api(prompt)

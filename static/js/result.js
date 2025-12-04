@@ -160,3 +160,17 @@ document.addEventListener('click', function(e) {
         });
     }
 });
+
+// 切换备选材料显示
+function toggleAlternatives(headerElement) {
+    const content = headerElement.nextElementSibling;
+    const isCollapsed = headerElement.classList.contains('collapsed');
+    
+    if (isCollapsed) {
+        headerElement.classList.remove('collapsed');
+        content.classList.add('show');
+    } else {
+        headerElement.classList.add('collapsed');
+        content.classList.remove('show');
+    }
+}

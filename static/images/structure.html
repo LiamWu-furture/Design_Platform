@@ -8,11 +8,11 @@
     
 </head>
 <body >
-    <div id="e9d22319c49f42ab96d0b05a90e84c2d" class="chart-container" style="width:100%; height:600px; "></div>
+    <div id="bcd5db2e6f7447d89451bd24931b01f1" class="chart-container" style="width:100%; height:600px; "></div>
     <script>
-        var chart_e9d22319c49f42ab96d0b05a90e84c2d = echarts.init(
-            document.getElementById('e9d22319c49f42ab96d0b05a90e84c2d'), 'light', {renderer: 'canvas', locale: 'ZH'});
-        var option_e9d22319c49f42ab96d0b05a90e84c2d = {
+        var chart_bcd5db2e6f7447d89451bd24931b01f1 = echarts.init(
+            document.getElementById('bcd5db2e6f7447d89451bd24931b01f1'), 'light', {renderer: 'canvas', locale: 'ZH'});
+        var option_bcd5db2e6f7447d89451bd24931b01f1 = {
     "backgroundColor": "#ffffff",
     "animation": true,
     "animationThreshold": 2000,
@@ -28,14 +28,17 @@
     "series": [
         {
             "type": "bar",
-            "name": "\u9876\u7535\u6781 (80nm)",
+            "name": "Thickness",
             "legendHoverLink": true,
             "data": [
-                80
+                500,
+                30,
+                300,
+                40,
+                100
             ],
             "realtimeSort": false,
             "showBackground": false,
-            "stack": "stack1",
             "stackStrategy": "samesign",
             "cursor": "pointer",
             "barMinHeight": 0,
@@ -50,168 +53,16 @@
             "z": 2,
             "label": {
                 "show": true,
-                "position": "inside",
-                "color": "white",
+                "position": "right",
+                "color": "#333",
                 "margin": 8,
-                "fontSize": 11,
+                "fontSize": 13,
                 "fontWeight": "bold",
-                "formatter": "{c}nm",
+                "formatter": "{c} nm",
                 "valueAnimation": false
             },
             "itemStyle": {
-                "color": "#5470c6",
-                "borderColor": "#fff",
-                "borderWidth": 2
-            }
-        },
-        {
-            "type": "bar",
-            "name": "\u7535\u5b50\u4f20\u8f93\u5c42 (ETL) (30nm)",
-            "legendHoverLink": true,
-            "data": [
-                30
-            ],
-            "realtimeSort": false,
-            "showBackground": false,
-            "stack": "stack1",
-            "stackStrategy": "samesign",
-            "cursor": "pointer",
-            "barMinHeight": 0,
-            "barCategoryGap": "20%",
-            "barGap": "30%",
-            "large": false,
-            "largeThreshold": 400,
-            "seriesLayoutBy": "column",
-            "datasetIndex": 0,
-            "clip": true,
-            "zlevel": 0,
-            "z": 2,
-            "label": {
-                "show": false,
-                "position": "inside",
-                "color": "white",
-                "margin": 8,
-                "fontSize": 11,
-                "fontWeight": "bold",
-                "formatter": "{c}nm",
-                "valueAnimation": false
-            },
-            "itemStyle": {
-                "color": "#91cc75",
-                "borderColor": "#fff",
-                "borderWidth": 2
-            }
-        },
-        {
-            "type": "bar",
-            "name": "\u5149\u5438\u6536\u5c42 (150nm)",
-            "legendHoverLink": true,
-            "data": [
-                150
-            ],
-            "realtimeSort": false,
-            "showBackground": false,
-            "stack": "stack1",
-            "stackStrategy": "samesign",
-            "cursor": "pointer",
-            "barMinHeight": 0,
-            "barCategoryGap": "20%",
-            "barGap": "30%",
-            "large": false,
-            "largeThreshold": 400,
-            "seriesLayoutBy": "column",
-            "datasetIndex": 0,
-            "clip": true,
-            "zlevel": 0,
-            "z": 2,
-            "label": {
-                "show": true,
-                "position": "inside",
-                "color": "white",
-                "margin": 8,
-                "fontSize": 11,
-                "fontWeight": "bold",
-                "formatter": "{c}nm",
-                "valueAnimation": false
-            },
-            "itemStyle": {
-                "color": "#fac858",
-                "borderColor": "#fff",
-                "borderWidth": 2
-            }
-        },
-        {
-            "type": "bar",
-            "name": "\u7a7a\u7a74\u4f20\u8f93\u5c42 (HTL) (10nm)",
-            "legendHoverLink": true,
-            "data": [
-                10
-            ],
-            "realtimeSort": false,
-            "showBackground": false,
-            "stack": "stack1",
-            "stackStrategy": "samesign",
-            "cursor": "pointer",
-            "barMinHeight": 0,
-            "barCategoryGap": "20%",
-            "barGap": "30%",
-            "large": false,
-            "largeThreshold": 400,
-            "seriesLayoutBy": "column",
-            "datasetIndex": 0,
-            "clip": true,
-            "zlevel": 0,
-            "z": 2,
-            "label": {
-                "show": false,
-                "position": "inside",
-                "color": "white",
-                "margin": 8,
-                "fontSize": 11,
-                "fontWeight": "bold",
-                "formatter": "{c}nm",
-                "valueAnimation": false
-            },
-            "itemStyle": {
-                "color": "#ee6666",
-                "borderColor": "#fff",
-                "borderWidth": 2
-            }
-        },
-        {
-            "type": "bar",
-            "name": "\u5e95\u7535\u6781 (150nm)",
-            "legendHoverLink": true,
-            "data": [
-                150
-            ],
-            "realtimeSort": false,
-            "showBackground": false,
-            "stack": "stack1",
-            "stackStrategy": "samesign",
-            "cursor": "pointer",
-            "barMinHeight": 0,
-            "barCategoryGap": "20%",
-            "barGap": "30%",
-            "large": false,
-            "largeThreshold": 400,
-            "seriesLayoutBy": "column",
-            "datasetIndex": 0,
-            "clip": true,
-            "zlevel": 0,
-            "z": 2,
-            "label": {
-                "show": true,
-                "position": "inside",
-                "color": "white",
-                "margin": 8,
-                "fontSize": 11,
-                "fontWeight": "bold",
-                "formatter": "{c}nm",
-                "valueAnimation": false
-            },
-            "itemStyle": {
-                "color": "#73c0de",
+                "color":                     function(params) {                        var colorList = ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de'];                        return colorList[params.dataIndex];                    }                ,
                 "borderColor": "#fff",
                 "borderWidth": 2
             }
@@ -220,24 +71,14 @@
     "legend": [
         {
             "data": [
-                "\u9876\u7535\u6781 (80nm)",
-                "\u7535\u5b50\u4f20\u8f93\u5c42 (ETL) (30nm)",
-                "\u5149\u5438\u6536\u5c42 (150nm)",
-                "\u7a7a\u7a74\u4f20\u8f93\u5c42 (HTL) (10nm)",
-                "\u5e95\u7535\u6781 (150nm)"
+                "Thickness"
             ],
             "selected": {},
-            "show": true,
-            "right": "2%",
-            "top": "10%",
-            "orient": "vertical",
+            "show": false,
             "padding": 5,
             "itemGap": 10,
             "itemWidth": 25,
             "itemHeight": 14,
-            "textStyle": {
-                "fontSize": 12
-            },
             "backgroundColor": "transparent",
             "borderColor": "#ccc",
             "borderRadius": 0,
@@ -269,24 +110,81 @@
         "confine": false,
         "appendToBody": false,
         "transitionDuration": 0.4,
-        "formatter": "{b}<br/>{a}: {c} nm",
+        "formatter": "{b}<br/>Thickness: {c} nm",
         "textStyle": {
-            "fontSize": 14
+            "color": "#fff",
+            "fontSize": 13
         },
-        "borderWidth": 0,
+        "backgroundColor": "rgba(50,50,50,0.9)",
+        "borderColor": "#333",
+        "borderWidth": 1,
         "padding": 5,
         "order": "seriesAsc"
     },
     "xAxis": [
         {
+            "name": "Thickness (nm)",
             "show": true,
             "scale": false,
-            "nameLocation": "end",
-            "nameGap": 15,
+            "nameLocation": "middle",
+            "nameGap": 35,
+            "nameTextStyle": {
+                "fontWeight": "bold",
+                "fontSize": 14
+            },
             "axisLabel": {
                 "show": true,
                 "margin": 8,
                 "fontSize": 12,
+                "valueAnimation": false
+            },
+            "inverse": false,
+            "offset": 0,
+            "splitNumber": 5,
+            "minInterval": 0,
+            "splitLine": {
+                "show": true,
+                "lineStyle": {
+                    "show": true,
+                    "width": 1,
+                    "opacity": 0.2,
+                    "curveness": 0,
+                    "type": "solid"
+                }
+            },
+            "animation": true,
+            "animationThreshold": 2000,
+            "animationDuration": 1000,
+            "animationEasing": "cubicOut",
+            "animationDelay": 0,
+            "animationDurationUpdate": 300,
+            "animationEasingUpdate": "cubicOut",
+            "animationDelayUpdate": 0
+        }
+    ],
+    "yAxis": [
+        {
+            "show": true,
+            "scale": false,
+            "nameLocation": "end",
+            "nameGap": 15,
+            "axisLine": {
+                "show": true,
+                "onZero": true,
+                "onZeroAxisIndex": 0
+            },
+            "axisTick": {
+                "show": true,
+                "alignWithLabel": false,
+                "inside": false
+            },
+            "axisLabel": {
+                "show": true,
+                "rotate": 0,
+                "margin": 8,
+                "interval": 0,
+                "fontSize": 12,
+                "fontWeight": "bold",
                 "valueAnimation": false
             },
             "inverse": false,
@@ -312,49 +210,12 @@
             "animationEasingUpdate": "cubicOut",
             "animationDelayUpdate": 0,
             "data": [
-                "Layer Stack"
+                "\u5e95\u7535\u6781\nFTO\n500nm",
+                "\u7535\u5b50\u4f20\u8f93\u5c42\nSnO2\n30nm",
+                "\u5149\u5438\u6536\u5c42\nCsSnI3 / Ti3SiC2 \u590d\u5408\u7ed3\u6784\n300nm",
+                "\u7a7a\u7a74\u4f20\u8f93\u5c42\nP3HT\n40nm",
+                "\u9876\u7535\u6781\nAg\n100nm"
             ]
-        }
-    ],
-    "yAxis": [
-        {
-            "name": "Thickness (nm)",
-            "show": true,
-            "scale": false,
-            "nameLocation": "end",
-            "nameGap": 15,
-            "nameTextStyle": {
-                "fontWeight": "bold",
-                "fontSize": 14
-            },
-            "axisLabel": {
-                "show": true,
-                "margin": 8,
-                "fontSize": 12,
-                "valueAnimation": false
-            },
-            "inverse": false,
-            "offset": 0,
-            "splitNumber": 5,
-            "minInterval": 0,
-            "splitLine": {
-                "show": true,
-                "lineStyle": {
-                    "show": true,
-                    "width": 1,
-                    "opacity": 1,
-                    "curveness": 0,
-                    "type": "solid"
-                }
-            },
-            "animation": true,
-            "animationThreshold": 2000,
-            "animationDuration": 1000,
-            "animationEasing": "cubicOut",
-            "animationDelay": 0,
-            "animationDurationUpdate": 300,
-            "animationEasingUpdate": "cubicOut",
-            "animationDelayUpdate": 0
         }
     ],
     "title": [
@@ -362,8 +223,9 @@
             "show": true,
             "text": "Detector Layer Structure",
             "target": "blank",
-            "subtext": "Total Thickness: 420 nm | 5 Layers",
+            "subtext": "Total: 970 nm | 5 Layers | Bottom \u2192 Top",
             "subtarget": "blank",
+            "left": "center",
             "padding": 5,
             "itemGap": 10,
             "textAlign": "auto",
@@ -371,7 +233,7 @@
             "triggerEvent": false,
             "textStyle": {
                 "fontWeight": "bold",
-                "fontSize": 20
+                "fontSize": 22
             },
             "subtextStyle": {
                 "color": "#666",
@@ -380,9 +242,9 @@
         }
     ]
 };
-        chart_e9d22319c49f42ab96d0b05a90e84c2d.setOption(option_e9d22319c49f42ab96d0b05a90e84c2d);
+        chart_bcd5db2e6f7447d89451bd24931b01f1.setOption(option_bcd5db2e6f7447d89451bd24931b01f1);
             window.addEventListener('resize', function(){
-                chart_e9d22319c49f42ab96d0b05a90e84c2d.resize();
+                chart_bcd5db2e6f7447d89451bd24931b01f1.resize();
             })
     </script>
 </body>

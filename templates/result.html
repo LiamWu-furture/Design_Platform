@@ -404,6 +404,78 @@
         .tab-content-wrapper .text-muted {
             color: #6c757d !important;
         }
+        
+        /* 备选材料样式 - 优化紧凑版 */
+        .alternative-materials {
+            margin-top: 8px;
+            padding: 6px 8px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border-left: 2px solid #6c757d;
+        }
+        .alternative-materials-header {
+            font-weight: 600;
+            color: #6c757d;
+            margin-bottom: 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            padding: 2px 0;
+        }
+        .alternative-materials-header:hover {
+            color: #ab0303;
+        }
+        .alternative-materials-header i {
+            transition: transform 0.3s;
+            font-size: 10px;
+        }
+        .alternative-materials-header.collapsed i {
+            transform: rotate(-90deg);
+        }
+        .alternative-material-item {
+            background: white;
+            padding: 5px 8px;
+            margin-bottom: 4px;
+            border-radius: 3px;
+            border: 1px solid #e9ecef;
+            font-size: 11px;
+        }
+        .alternative-material-item:last-child {
+            margin-bottom: 0;
+        }
+        .alternative-material-name {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 3px;
+            font-size: 11px;
+        }
+        .alternative-material-bandgap {
+            color: #6c757d;
+            font-size: 10px;
+            margin-bottom: 3px;
+        }
+        .alternative-material-pros {
+            color: #28a745;
+            font-size: 10px;
+            margin-bottom: 2px;
+            line-height: 1.3;
+        }
+        .alternative-material-cons {
+            color: #dc3545;
+            font-size: 10px;
+            line-height: 1.3;
+        }
+        .alternative-materials-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            margin-top: 6px;
+        }
+        .alternative-materials-content.show {
+            max-height: 400px;
+        }
     </style>
 </head>
 <body>
@@ -605,6 +677,40 @@
                                     <div class="col-md-12 mt-2"><strong>制备工艺：</strong>{{ layer.fabrication_process }}</div>
                                     {% endif %}
                                 </div>
+                                
+                                {% if layer.alternative_materials and layer.alternative_materials|length > 0 %}
+                                <div class="alternative-materials">
+                                    <div class="alternative-materials-header collapsed" onclick="toggleAlternatives(this)">
+                                        <i class="fas fa-chevron-down"></i>
+                                        <span>备选材料 ({{ layer.alternative_materials|length }}个)</span>
+                                    </div>
+                                    <div class="alternative-materials-content">
+                                        {% for alt in layer.alternative_materials %}
+                                        <div class="alternative-material-item">
+                                            <div class="alternative-material-name">
+                                                <i class="fas fa-circle" style="font-size: 6px; margin-right: 4px;"></i>
+                                                {{ alt.material }}
+                                            </div>
+                                            {% if alt.bandgap %}
+                                            <div class="alternative-material-bandgap">
+                                                <i class="fas fa-info-circle"></i> 禁带宽度: {{ alt.bandgap }} eV
+                                            </div>
+                                            {% endif %}
+                                            {% if alt.pros %}
+                                            <div class="alternative-material-pros">
+                                                <i class="fas fa-plus-circle"></i> <strong>优点:</strong> {{ alt.pros }}
+                                            </div>
+                                            {% endif %}
+                                            {% if alt.cons %}
+                                            <div class="alternative-material-cons">
+                                                <i class="fas fa-minus-circle"></i> <strong>缺点:</strong> {{ alt.cons }}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {% endif %}
                             </div>
                             {% endfor %}
                             
