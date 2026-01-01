@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="img/images.png" width="260" alt="项目Logo">
+  <img src="img/images.png" width="560" alt="项目Logo">
 
   <h1>叠层光电人工智能设计平台</h1>
 
@@ -106,6 +106,7 @@ MIT License
 Powered by **Flask** & **DeepSeek AI**
 
 </div>
+
 
 
 
