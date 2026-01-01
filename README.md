@@ -1,5 +1,7 @@
-# 🔬 叠层光电探测器 AI 设计平台
-
+<div align="center">
+<h1>叠层光电人工智能设计平台</h1>
+</div>
+<img src="img/images.png" width="150px" height="150px" alt="项目Logo">
 <div align="center">
 
 **Stacked Photodetector AI Design Platform**
@@ -86,10 +88,10 @@ python app.py
 
 MIT License
 
----
 
 <div align="center">
 
 Powered by **Flask** & **DeepSeek AI**
 
 </div>
+
