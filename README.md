@@ -1,16 +1,28 @@
 <div align="center">
-<h1>叠层光电人工智能设计平台</h1>
+  <img src="img/images.png" width="260" alt="项目Logo">
+
+  <h1>叠层光电人工智能设计平台</h1>
+
+  <p>
+    <strong>堆叠式光电探测器人工智能设计平台</strong>
+  </p>
+
+  <p>
+    <img src="https://img.shields.io/badge/Python-3.8+-blue.svg" alt="Python">
+    <img src="https://img.shields.io/badge/Flask-3.0-green.svg" alt="Flask">
+    <img src="https://img.shields.io/badge/AI-DeepSeek-purple.svg" alt="DeepSeek">
+  </p>
+
+  <p>
+    AI深度推理 | 智能材料选择 | 渐进式设计 | RAG知识增强
+  </p>
 </div>
-<img src="img/images.png" width="300px" align="center" alt="项目Logo">
-<div align="center">
 
-**Stacked Photodetector AI Design Platform**
+---
 
-[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
-[![Flask](https://img.shields.io/badge/Flask-3.0-green.svg)](https://flask.palletsprojects.com/)
-[![DeepSeek](https://img.shields.io/badge/AI-DeepSeek-purple.svg)](https://www.deepseek.com/)
+## 📖 简介
 
-</div>
+基于Flask和DeepSeek大语言模型的智能光电吸附设计系统。通过AI深度推理，根据用户输入的材料参数和应用需求，自动生成器件叠层结构设计、性能预测及优化建议。
 
 ## 📖 简介
 
@@ -94,5 +106,6 @@ MIT License
 Powered by **Flask** & **DeepSeek AI**
 
 </div>
+
 
 
