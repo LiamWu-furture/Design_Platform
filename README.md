@@ -1,7 +1,7 @@
 <div align="center">
 <h1>叠层光电人工智能设计平台</h1>
 </div>
-<img src="img/images.png" width="150px" height="150px" alt="项目Logo">
+<img src="img/images.png" width="300px" align="center" alt="项目Logo">
 <div align="center">
 
 **Stacked Photodetector AI Design Platform**
@@ -94,4 +94,5 @@ MIT License
 Powered by **Flask** & **DeepSeek AI**
 
 </div>
+
 
