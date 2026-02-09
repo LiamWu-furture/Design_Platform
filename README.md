@@ -66,7 +66,13 @@ pip install -r requirements.txt
 
 ### 4. 配置环境变量
 
-创建 `.env` 文件：
+复制模板并填入你的 API 密钥：
+
+```bash
+cp .env.example .env
+```
+
+编辑 `.env` 文件：
 
 ```env
 DEEPSEEK_API_KEY=sk-xxxxxxxxxxxxxxxx       # DeepSeek API 密钥（必需）
@@ -79,13 +85,13 @@ DASHSCOPE_API_KEY=sk-xxxxxxxxxxxxxxxx       # 阿里云 DashScope API 密钥（R
 将学术文献 PDF 放入 `data/` 目录，然后运行：
 
 ```bash
-python vector_database_save.py
+python scripts/vector_database_save.py
 ```
 
 后续新增文献可放入 `data_new/` 目录，运行增量更新：
 
 ```bash
-python vector_database_add.py
+python scripts/vector_database_add.py
 ```
 
 ### 6. 启动应用
@@ -95,7 +101,7 @@ python vector_database_add.py
 python app.py
 
 # 生产模式（使用 Gunicorn）
-gunicorn -w 4 -b 0.0.0.0:5000 wsgi:app
+gunicorn -c gunicorn_config.py wsgi:app
 
 # Windows 一键启动
 run.bat
@@ -112,9 +118,10 @@ run.bat
 ├── visualize.py               # PyECharts 可视化生成（结构图 + 性能曲线）
 ├── utils.py                   # 工具函数（JSON 解析等）
 ├── wsgi.py                    # WSGI 入口（Gunicorn 部署用）
+├── gunicorn_config.py         # Gunicorn 生产配置
 ├── run.bat                    # Windows 一键启动脚本
 ├── requirements.txt           # Python 依赖列表
-├── .env                       # 环境变量配置（API 密钥等）
+├── .env.example               # 环境变量模板（复制为 .env 后填入密钥）
 │
 ├── templates/                 # Jinja2 页面模板
 │   ├── index.html             #   参数输入页面
@@ -125,14 +132,24 @@ run.bat
 ├── static/                    # 静态资源
 │   ├── css/style.css          #   全局样式
 │   ├── js/result.js           #   结果页交互逻辑
-│   └── images/                #   生成的可视化图表（HTML）
+│   └── images/                #   运行时生成的可视化图表
+│
+├── scripts/                   # 工具脚本
+│   ├── vector_database_save.py    # 向量数据库创建脚本
+│   ├── vector_database_add.py     # 向量数据库增量更新脚本
+│   ├── vector_database_use.py     # 向量数据库问答测试
+│   └── RAG_test.py                # RAG 功能独立测试
 │
 ├── data/                      # 学术文献 PDF（30+ 篇论文）
-├── vector_db/                 # FAISS 向量数据库（index.faiss + index.pkl）
+├── vector_db/                 # FAISS 向量数据库（运行时生成，已 gitignore）
 │
-├── vector_database_save.py    # 向量数据库创建脚本
-├── vector_database_add.py     # 向量数据库增量更新脚本
-└── RAG_test.py                # RAG 功能测试脚本
+├── docs/                      # 项目文档与笔记
+│   ├── 创新点总结和建议.txt
+│   ├── 向量数据库的创建.txt
+│   └── 论文.docx
+│
+└── img/                       # 项目图片资源
+    └── images.png             # 项目 Logo
 ```
 
 ## 🛠️ 技术栈
@@ -167,7 +184,7 @@ run.bat
 ## ⚠️ 注意事项
 
 - 确保 DeepSeek API Key 和 DashScope API Key 有效且有足够额度
-- 首次使用需运行 `vector_database_save.py` 构建向量数据库
+- 首次使用需运行 `python scripts/vector_database_save.py` 构建向量数据库
 - 设计结果基于 AI 推理和文献参考，仅供科研参考，实际性能需实验验证
 - 请勿将 `.env` 文件中的 API Key 提交到公开仓库
 - 过期的设计结果会在 24 小时后自动清理

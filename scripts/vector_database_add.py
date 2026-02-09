@@ -1,13 +1,27 @@
 # author:LiamWu
 # beginDate:2025/12/01
 # 功能：向现有的向量数据库追加新的PDF文档
+# 用法：在项目根目录运行 python scripts/vector_database_add.py
+import os
+import sys
+from dotenv import load_dotenv
+
+# 确保工作目录为项目根目录
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+os.chdir(PROJECT_ROOT)
+sys.path.insert(0, PROJECT_ROOT)
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.document_loaders import DirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import DashScopeEmbeddings
-import os
 
+load_dotenv()
+
+DASHSCOPE_API_KEY = os.getenv('DASHSCOPE_API_KEY', '')
+if not DASHSCOPE_API_KEY:
+    print("错误：未配置 DASHSCOPE_API_KEY，请在 .env 文件中设置")
+    exit(1)
 
 # 检查向量数据库是否存在
 if not os.path.exists("vector_db"):
@@ -18,7 +32,7 @@ if not os.path.exists("vector_db"):
 # 配置 Embedding 模型
 embeddings = DashScopeEmbeddings(
     model = "text-embedding-v4",
-    dashscope_api_key =  "sk-69122c7a6960491685c6edc87c028dfa",
+    dashscope_api_key = DASHSCOPE_API_KEY,
 )
 
 # 加载现有的向量数据库

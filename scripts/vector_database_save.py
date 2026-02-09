@@ -1,14 +1,29 @@
 # author:LiamWu
 # beginDate:2025/11/28
+# 功能：从 data/ 目录加载 PDF 文献，创建 FAISS 向量数据库
+# 用法：在项目根目录运行 python scripts/vector_database_save.py
+import os
+import sys
+from dotenv import load_dotenv
+
+# 确保工作目录为项目根目录
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+os.chdir(PROJECT_ROOT)
+sys.path.insert(0, PROJECT_ROOT)
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.document_loaders import DirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import DashScopeEmbeddings
 
+load_dotenv()
 
-# 把论文pdf版本放在data文件夹下面,运行此文件,此文件会自动加载pdf文本,并创建向量数据库
-# 向量数据库会保存在
+DASHSCOPE_API_KEY = os.getenv('DASHSCOPE_API_KEY', '')
+if not DASHSCOPE_API_KEY:
+    print("错误：未配置 DASHSCOPE_API_KEY，请在 .env 文件中设置")
+    exit(1)
+
+# 把论文pdf版本放在data文件夹下面，运行此文件会自动加载pdf文本并创建向量数据库
 
 # 加载所有在data文件夹下面的论文
 loader = DirectoryLoader(
@@ -32,7 +47,7 @@ print(f"已被划分成{len(chunks)}个可嵌入区块")
 
 embeddings = DashScopeEmbeddings(
     model = "text-embedding-v4",
-    dashscope_api_key =  "sk-69122c7a6960491685c6edc87c028dfa",
+    dashscope_api_key = DASHSCOPE_API_KEY,
 )
 
 # 分批处理以避免 API 限制和兼容性问题

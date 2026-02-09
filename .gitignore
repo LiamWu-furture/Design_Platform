@@ -1,4 +1,6 @@
+# ========================
 # Python
+# ========================
 __pycache__/
 *.py[cod]
 *$py.class
@@ -20,39 +22,64 @@ wheels/
 .installed.cfg
 *.egg
 
+# ========================
 # Virtual Environment
+# ========================
 .venv/
 venv/
 ENV/
 env/
 
+# ========================
 # IDE
+# ========================
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
+.cursor/
 
-# Environment variables
+# ========================
+# Environment Variables
+# ========================
+.env
 .env.local
 .env.*.local
 
+# ========================
 # Flask
+# ========================
 instance/
 .webassets-cache
 
-# Generated images
+# ========================
+# Generated Files (runtime)
+# ========================
+static/images/*.html
 static/images/*.png
 static/images/*.jpg
 
+# ========================
+# Vector Database (generated)
+# ========================
+vector_db/
+
+# ========================
 # OS
+# ========================
 .DS_Store
 Thumbs.db
+desktop.ini
 
+# ========================
 # Logs
+# ========================
 *.log
 
+# ========================
 # Testing
+# ========================
 .pytest_cache/
 .coverage
 htmlcov/

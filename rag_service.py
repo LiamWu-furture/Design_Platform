@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # 配置 API Key
-DASHSCOPE_API_KEY = os.getenv('DASHSCOPE_API_KEY', 'sk-69122c7a6960491685c6edc87c028dfa')
+DASHSCOPE_API_KEY = os.getenv('DASHSCOPE_API_KEY', '')
 os.environ["DASHSCOPE_API_KEY"] = DASHSCOPE_API_KEY
 
 # 全局变量：向量数据库和检索器

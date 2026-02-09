@@ -1,15 +1,33 @@
-from random import choices
+# author:LiamWu
+# 功能：RAG 功能测试脚本（独立的 Embedding + FAISS 测试）
+# 用法：在项目根目录运行 python scripts/RAG_test.py
+import os
+import sys
+from dotenv import load_dotenv
 
-API_KEY_Qwen3_MAX = "sk-69122c7a6960491685c6edc87c028dfa"
-
+# 确保工作目录为项目根目录
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+os.chdir(PROJECT_ROOT)
+sys.path.insert(0, PROJECT_ROOT)
 from openai import OpenAI
 import faiss
 import numpy as np
 import json
+
+load_dotenv()
+
+DASHSCOPE_API_KEY = os.getenv('DASHSCOPE_API_KEY', '')
+if not DASHSCOPE_API_KEY:
+    print("错误：未配置 DASHSCOPE_API_KEY，请在 .env 文件中设置")
+    exit(1)
+
 # ===============================
 # 1. 初始化 OpenAI 客户端
 # ===============================
-client = OpenAI(api_key=API_KEY_Qwen3_MAX,base_url="https://dashscope.aliyuncs.com/compatible-mode/v1")
+client = OpenAI(
+    api_key=DASHSCOPE_API_KEY,
+    base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"
+)
 
 
 # ===============================
@@ -73,7 +91,7 @@ def answer(query):
 【要求】
 1. 基于资料作答
 2. 若问题已确认不属于资料里面的内容或者指代不明确，请根据自身已学习知识回答，并不要说明根据"自身已学习知识回答"和显示资料库里面的任何内容
-3. 若资料不足请说明“基于自身已学习知识回答”，并给出回答
+3. 若资料不足请说明"基于自身已学习知识回答"，并给出回答
 4. 若问题指代不明确，请不要输出资料库里面的任何内容 -- 特别重要
 """
 
@@ -81,7 +99,7 @@ def answer(query):
     response = client.chat.completions.create(
         model="qwen3-max",
         messages=[{"role": "user", "content": prompt}],
-        stream = True,
+        stream=True,
         stream_options={"include_usage": True}
     )
 
@@ -99,4 +117,4 @@ if __name__ == "__main__":
         print("\nRAG 应答：")
         for chunk in answer(q):
             if chunk.choices and chunk.choices[0].delta.content:
-                print(chunk.choices[0].delta.content,end="")
+                print(chunk.choices[0].delta.content, end="")
