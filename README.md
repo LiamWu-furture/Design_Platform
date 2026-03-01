@@ -28,6 +28,16 @@
 
 系统支持 **深度思考模式 (DeepSeek-R1)** 和 **快速模式 (DeepSeek-V3)** 两种推理引擎，并通过流式输出实时展示 AI 的推理过程，为科研人员和工程师提供专业的器件设计辅助工具。
 
+> **English Summary (for global discoverability):**
+> This project is an AI-powered multilayer photodetector design platform built with Flask, DeepSeek LLM, and RAG (LangChain + FAISS). It helps researchers generate stack structures, material recommendations, performance predictions, and optimization suggestions from literature-aware reasoning.
+
+## 🔍 搜索优化关键词（GitHub / Google / 学术检索）
+
+`photodetector design` `optoelectronic device design` `multilayer photodetector` `AI for materials science` `RAG for scientific literature` `DeepSeek R1` `LangChain FAISS` `Flask AI app` `光电探测器设计` `叠层器件设计` `材料智能选择` `科研 AI 助手`
+
+> 建议在 GitHub 仓库 **Topics** 中添加：
+> `photodetector` `optoelectronics` `materials-science` `rag` `llm` `deepseek` `flask` `langchain` `faiss` `python` `ai-design`
+
 ## ✨ 核心功能
 
 - **智能材料选择** - 支持量子点、单晶、多晶、二维材料等多种类别
@@ -38,6 +48,13 @@
 - **完整器件设计** - 自动生成包含电极、传输层、吸收层的完整叠层结构
 - **备选材料推荐** - 每层提供 2-3 种备选材料及优缺点分析
 - **优化建议生成** - 基于文献和 AI 分析提供器件性能优化方向
+
+## 🎯 适用场景
+
+- 光电探测器初步结构设计与材料筛选
+- 基于文献证据的器件方案对比与迭代
+- 科研教学中的 AI 辅助器件设计演示
+- 快速构建“AI + 光电器件”原型系统
 
 ## 🚀 快速开始
 
@@ -192,6 +209,14 @@ run.bat
 ## 📄 许可证
 
 MIT License
+
+## 🌟 支持项目
+
+如果这个项目对你有帮助，欢迎：
+
+- 点一个 **Star** 提高项目可见度
+- 在 Issue 中反馈问题或提出想法
+- Fork 后提交 PR 共建功能
 
 
 <div align="center">
